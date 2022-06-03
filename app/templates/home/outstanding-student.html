@@ -1,0 +1,53 @@
+{% extends "layouts/primary.html" %}
+
+{% block title %} Outstanding Student {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}   
+       
+        <div class="container-fluid mathsolver-bg">
+            <div class="container top-space">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <h2>Most Outstanding Student</h2>
+                                <p>Most <b class="text-danger">Outstanding</b> secondary student <br /> For Secondary Education.<br /><strong>Outstanding Student:</strong> This level of competition is meant for secondary category of student (Junior and Senior). The rewarding package involves Art and Science students.</p>
+                            </div>
+                            <div class="col-sm-12">
+                                <p>
+                                    <i class="fa fa-star sabi-star" aria-hidden="true"></i>
+                                    <i class="fa fa-star sabi-star" aria-hidden="true"></i>
+                                    Sabimillionaire's Most Outstanding Student of The Year</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="col-sm-12">
+                        <h3 class="page-header">
+                            ...
+                        </h3>
+                    </div>
+                    <div class="col-sm-12">
+                        <p>...</p>
+                    </div>
+                </div>
+                <div class="col-sm-4 col-sm-offset-1">
+                    <img src="/static/assets/images/outstanding-student.png" alt="picture" class="img-responsive" width="100" height="100">
+                </div>
+            </div>
+        </div>
+
+        {% include 'includes/footer.html' %}
+        
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}

@@ -1,0 +1,76 @@
+{% extends "layouts/primary.html" %}
+
+{% block title %} Gallery {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+    <link rel="stylesheet" href="/static/assets/css/gallery.css">
+{% endblock stylesheets %}
+
+{% block content %}
+
+        <div class="container-fluid tm-container-content tm-mt-60">
+            <div class="row tm-mb-90 tm-gallery">
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
+                    <figure class="effect-ming tm-video-item">
+                        <img src="/static/assets/gallery/img-01.jpg" alt="First winner of Sabimillionaire internal test competition" class="img-fluid">
+                        <small class="image-footer">First winner of Sabimillionaire internal test competition @ State Primary School, Rumualogu<br /><strong>Arinze Celestine</strong></small>
+                        <figcaption class="d-flex align-items-center justify-content-center">
+                            <h2>First winner of Sabimillionaire internal test competition</h2>
+                        </figcaption>                 
+                    </figure>
+                </div>
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
+                    <figure class="effect-ming tm-video-item">
+                        <img src="/static/assets/gallery/img-02.jpg" alt="Image" class="img-fluid">
+                        <small class="image-footer">Internal test competition @ State Primary School, Rumualogu</small>                
+                        <figcaption>
+                            <h2>Internal Test Competition @ State Primary School</h2>
+                        </figcaption>
+                    </figure>
+                </div>
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
+                    <figure class="effect-ming tm-video-item">
+                        <img src="/static/assets/gallery/img-04.jpg" alt="Image" class="img-fluid"> 
+                        <small class="image-footer">Marvellous Anthony, an awardee of Sabimillionaire</small>  
+                        <figcaption><h2>Marvellous Anthony, an awardee of Sabimillionaire</h2></figcaption>              
+                    </figure>
+                </div>
+                
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
+                    <figure class="effect-ming tm-video-item">
+                        <img src="/static/assets/gallery/img-05.jpg" alt="Image" class="img-fluid"> 
+                        <small class="image-footer">Rewarded Pupils of State Primary School, Rumualogu</small>                  
+                        <figcaption><h2>Rewarded Pupils of State Primary School, Rumualogu</h2></figcaption>
+                    </figure>
+                </div>
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
+                    <figure class="effect-ming tm-video-item">
+                        <img src="/static/assets/gallery/img-06.jpg" alt="Image" class="img-fluid">                    
+                    </figure>
+                </div>
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-12 mb-5">
+                    <figure class="effect-ming tm-video-item">
+                        <img src="/static/assets/gallery/img-07.jpg" alt="Image" class="img-fluid">                    
+                    </figure>
+                </div>
+            </div> <!-- row -->
+
+
+            <div class="row tm-mb-90">
+                <div class="col-12 d-flex justify-content-between align-items-center tm-paging-col">
+                    <a href="javascript:void(0);" class="btn btn-primary tm-btn-prev mb-2 disabled">Previous</a>
+                    <div class="tm-paging d-flex">
+                        <a href="javascript:void(0);" class="active tm-paging-link">1</a><a href="javascript:void(0);" class="tm-paging-link">2</a><a href="javascript:void(0);" class="tm-paging-link">3</a><a href="javascript:void(0);" class="tm-paging-link">4</a>
+                    </div>
+                    <a href="javascript:void(0);" class="btn btn-primary tm-btn-next">Next Page</a>
+                </div>            
+            </div>
+        </div> <!-- container-fluid, tm-container-content -->
+
+        {% include 'includes/footer.html' %}
+        
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
