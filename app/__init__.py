@@ -6,6 +6,7 @@ from importlib import import_module
 db = SQLAlchemy()
 login_manager = LoginManager()
 
+
 def register_extensions(app):
     db.init_app(app) # Initializes the database
     login_manager.init_app(app) #Initializes login manager

@@ -21,27 +21,27 @@
                 <ul class="nav pcoded-inner-navbar">
                     <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" 
                         class="nav-item {% if 'index' in segment %} active {% endif %}">
-                        <a href="/" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+                        <a href="{{ url_for('home_blueprint.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                     </li>
-                    <li data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe" class="nav-item pcoded-hasmenu">
+                    <!-- <li data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe" class="nav-item pcoded-hasmenu">
                         <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Transactions</span></a>
                         <ul class="pcoded-submenu">
                             <li><a href="/sent-transactions.html" class="">Sent</a></li>
                             <li><a href="/received-transactions.html" class="">Received</a></li>
                             <li><a href="/withdrawals.html" class="">Withdrawals</a></li>
                         </ul>
-                    </li>
+                    </li> -->
                     <li data-username="form elements advance componant validation masking wizard picker select" 
                         class="nav-item {% if 'ui-forms' in segment %} active {% endif %}">
-                        <a href="#" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Virtual Cards</span></a>
+                        <a href="{{ url_for('home_blueprint.free_trivia') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-file-text"></i></span><span class="pcoded-mtext">Free Trivia Test</span></a>
                     </li>
                     <li data-username="Table bootstrap datatable footable" 
                         class="nav-item {% if 'ui-tables' in segment %} active {% endif %}">
-                        <a href="/" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span class="pcoded-mtext">Bank Details</span></a>
+                        <a href="" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span class="pcoded-mtext">Play & Win</span></a>
                     </li>
                     <li data-username="Table bootstrap datatable footable" 
                         class="nav-item {% if 'ui-tables' in segment %} active {% endif %}">
-                        <a href="/" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span class="pcoded-mtext">Profile Settings</span></a>
+                        <a href="" class="nav-link "><span class="pcoded-micon"><i class="feather icon-server"></i></span><span class="pcoded-mtext">Profile Settings</span></a>
                     </li>
                     <li data-username="Disabled Menu" class="nav-item">
                         <a href="{{ url_for('auth_blueprint.logout') }}" class="nav-link">

@@ -3,20 +3,26 @@
 {% block title %} Home {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="/static/assets/css/contact.css">
+{% endblock stylesheets %}
 
 {% block content %}   
         
         
         <div class="container"  id="contact-form">
-            <div class="row">
+            <div class="row col-lg-12">
                 <br /><br />
                 <div class="col-lg-6">
                     <p><i class="fa fa-phone"> </i> 08069106065, 08090753745</p>
                     <p><i class="fa fa-envelope"> </i> support@Sabimillionaire.com.ng</p>
                     <p><i class="fa fa-envelope"> </i> info@Sabimillionaire.com.ng</p>
                     <p><i class="fa fa-map-marker"> </i> #24 Alakahia Link Road, Opp. MTN Mast, Port Harcourt</p>
+
+                    <br><br>
+                    <div><div class="mapouter"><div class="gmap_canvas"><iframe width="421" height="367" id="gmap_canvas" src="https://maps.google.com/maps?q=24%20Alakahia%20Link%20Road,%20UPTH&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><a href="https://123movies-to.org"></a><br><style>.mapouter{position:relative;text-align:right;height:367px;width:421px;}</style><a href="https://www.embedgooglemap.net"></a><style>.gmap_canvas {overflow:hidden;background:none!important;height:367px;width:421px;}</style></div></div></div>
                 </div>
+
                 <div class="col-lg-6">
                     <h3>Contact Form</h3>
                     <form action="">
@@ -288,6 +294,7 @@
                         
                         <input type="submit" value="Submit" id="submit">
                     </form>
+
                     <br />
                 </div>
             </div>

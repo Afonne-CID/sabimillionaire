@@ -1,0 +1,160 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Free Trivia Test {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}
+    <link rel="stylesheet" href="/static/assets/css/questions.css">
+{% endblock stylesheets %}
+
+{% block content %}
+
+    {% if current_user.is_authenticated %}
+        {% if cnt %} 
+            <br><br> 
+            <div class="tw-relative">
+                <div class="tw-max-w-xl tw-mx-auto tw-my-2">
+
+                    <div class="tw-flex tw-justify-between tw-items-center tw-mx-6 tw-mb-1">
+                        <div class="tw-text-gray-600 tw-text-center tw-text-md tw-w-2/12 md:tw-w-1/12"><span class="tw-font-bold tw-text-lg tw-text-ct-games">{{ cnt }}</span>/5</div>
+                        <div class="tw-flex">
+                            <div class="tw-relative tw-flex tw-items-center tw-w-full">
+                                <div class="
+                                    tw-text-white
+                                    tw-font-bold
+                                    tw-ml-8
+                                    tw-text-center
+                                    tw-text-base
+                                    tw-px-3
+                                    tw-bg-ct-games">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="myProgress">
+                            <div id="myBar"></div>
+                        </div>
+                        <div class="tw-mb-2">
+                            <!----> 
+                            <div class="tw-relative tw-pt-1">
+                                <div class="
+                                    tw-overflow-hidden
+                                    tw-h-2
+                                    tw-text-xs
+                                    tw-flex
+                                    tw-rounded-full
+                                    tw-bg-ct-light-grey
+                                    ">
+                                    <div class="
+                                    tw-shadow-none
+                                    tw-flex
+                                    tw-flex-col
+                                    tw-text-center
+                                    tw-whitespace-nowrap
+                                    tw-text-white
+                                    tw-justify-center
+                                    tw-bg-ct-users-actions" style="width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tw-max-w-xl tw-mx-auto" active="true" order="1" _id="5fdafca90b81ed117b28733c" questionid="5fdafca90b81ed117b28733c" tags="5fdafc920b81ed117b286e4a,5eb985c0a408a52cbbcd61df" incorrect="Cyclops,Axis,Tethys" applicableforimagegeneration="true" createdat="2020-12-17T06:37:29.246Z" updatedat="2022-01-19T17:40:09.510Z" __v="0" correctcount="37" incorrectcount="8,7,3" imgwidths="600,400,200" answers="[object Object],[object Object],[object Object],[object Object]" totalcount="55" noscripttext="text: Who was the giant Hercules tricked into holding up the sky in his stead?, correct: Atlas, incorrect: Cyclops,Axis,Tethys, fun fact: After killing his family in a fit of madness induced by Hera, Hercules had to pay penance by completing 12 almost impossible tasks.">
+                        <div class="tw-px-4 tw-rounded-3xl tw-shadow-lg tw--mt-3 tw-pb-2 tw-pt-4">
+                            <div class="tw-text-center tw-text-ct-fun-facts tw-text-md tw-mb-1">
+                            </div>
+                            <section class="tw-rounded-3xl tw-p-3 tw-text-center tw-bg-ct-fun-facts-lighterer tw-text-ct-fun-facts-dark tw-text-xl">
+                                {{ question.question }}
+                            </section>
+                            <!---->
+                        </div>
+                    </div>
+                
+
+
+                    <div class="
+                        tw-px-2
+                        tw-py-1
+                        tw-shadow-lg
+                        tw-rounded-3xl
+                        tw-flex
+                        tw-flex-col
+                        tw-justify-center
+                        tw-items-center
+                    ">
+                        <form id="questions-form" method="post" action="">
+                            <input type="hidden" value="{{ cnt }}" name="cnt">
+                            <input type="hidden" value="{{ level }}" name="level">
+                            <input type="hidden" value="{{ question.id }}" name="question-id">
+                            {% for option in options %}
+                                <input type="radio" name="unique-selection" value="{{ option }}">
+                                <label for="{{ option }}" class="question-option">{{ option }}</label><br><br>
+                            {% endfor %}
+
+                            <div>
+                                <button id="next" name="next" class="tw-px-2 tw-py-3 tw-w-full tw-rounded-3xl tw-my-3 tw-flex tw-justify-center tw-items-center tw-font-bold tw-max-w-xl tw-mx-auto tw-bg-ct-games tw-text-white tw-shadow-lg"><span class="tw-mr-2">Next</span> <svg data-v-d0f6a7bc="" aria-labelledby="Arrow Right" role="presentation" width="20" height="20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" class="tw-fill-current currentColor tw-animate-next"><title data-v-d0f6a7bc="" id="Arrow Right" lang="en">Arrow Right icon</title> <g data-v-d0f6a7bc=""><g class="b" data-v-d0f6a7bc=""><path d="M30.5234,45.0035a1.2357,1.2357,0,0,1-.5113-.1111,1.3912,1.3912,0,0,1-.8208-1.2848V33.5521H1.5541A1.365,1.365,0,0,1,.222,32.1632V17.9688A1.3605,1.3605,0,0,1,1.5541,16.58H29.1913V6.5174a1.3912,1.3912,0,0,1,.8208-1.2848,1.2831,1.2831,0,0,1,1.4532.3056L49.2532,24.08a1.4233,1.4233,0,0,1,0,1.9652L31.4653,44.5938A1.299,1.299,0,0,1,30.5234,45.0035Z" class="c"></path></g></g></svg></button>
+                            </div>
+                        </form>
+                    </div>         
+
+                </div>
+            </div>
+        {% else %}
+            <br><br>
+            <div>
+                <div class="tw-mb-2">
+                    <!----> 
+                    <div class="tw-relative tw-pt-1">
+                        <div class="
+                        tw-overflow-hidden
+                        tw-h-2
+                        tw-text-xs
+                        tw-flex
+                        tw-rounded-full
+                        tw-bg-ct-light-grey
+                        ">
+                        <div class="
+                        tw-shadow-none
+                        tw-flex
+                        tw-flex-col
+                        tw-text-center
+                        tw-whitespace-nowrap
+                        tw-text-white
+                        tw-justify-center
+                        tw-bg-ct-users-actions" style="width: 100%;"></div>
+                    </div>
+                </div>
+                </div>
+                <div>
+                    <div class="tw-max-w-xl tw-mx-auto" active="true" order="1" _id="5fdafca90b81ed117b28733c" questionid="5fdafca90b81ed117b28733c" tags="5fdafc920b81ed117b286e4a,5eb985c0a408a52cbbcd61df" incorrect="Cyclops,Axis,Tethys" applicableforimagegeneration="true" createdat="2020-12-17T06:37:29.246Z" updatedat="2022-01-19T17:40:09.510Z" __v="0" correctcount="37" incorrectcount="8,7,3" imgwidths="600,400,200" answers="[object Object],[object Object],[object Object],[object Object]" totalcount="55" noscripttext="text: Who was the giant Hercules tricked into holding up the sky in his stead?, correct: Atlas, incorrect: Cyclops,Axis,Tethys, fun fact: After killing his family in a fit of madness induced by Hera, Hercules had to pay penance by completing 12 almost impossible tasks.">
+                        <div class="tw-px-4 tw-rounded-3xl tw-shadow-lg tw--mt-3 tw-pb-2 tw-pt-4">
+                            <div class="tw-text-center tw-text-ct-fun-facts tw-text-md tw-mb-1">
+                            </div>
+                            <section class="tw-rounded-3xl tw-p-3 tw-text-center tw-bg-ct-fun-facts-lighterer tw-text-ct-fun-facts-dark tw-text-xl">
+                                <strong>Instructions</strong>
+                                <p>Your're going to be tested for intelligence and speed.<br>So you need to select the right options in time.</p>
+                            </section>
+                            <!---->
+                        </div>
+                        <br><br>
+                        <div class="tw-relative">
+                            <form id="start-test" method="post" action="">
+                                <input type="hidden" value="{{ level }}" name="level">
+                                <input type="hidden" value="{{ cnt }}" name="cnt">
+                                <button onclick="move()" class="btn btn-success btn-lg-primary center" name="start">Start Free Test</a></p><button>
+                            </form>
+                        </div>
+                    </div>        
+                </div>
+            </div>
+            
+        {% endif %}
+    {% endif %}
+
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+        <script type="text/javascript" src="/static/assets/js/questions.js"></script>
+{% endblock javascripts %}
+    

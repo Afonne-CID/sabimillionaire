@@ -1,8 +1,10 @@
+from doctest import debug_script
 import mimetypes
 from . import db
 from flask_login import UserMixin
 from app import db, login_manager
 from app.auth.util import hash_pass
+import datetime
 
 
 class User(db.Model, UserMixin):
@@ -14,7 +16,8 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True)
-    created_at = db.Column(db.DateTime)
+    dob = db.Column(db.DateTime, nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     updated_at = db.Column(db.DateTime)
     address = db.Column(db.String(250))
     city = db.Column(db.String(50))
@@ -62,3 +65,56 @@ class Transaction(db.Model):
     date = db.Column(db.DateTime)
     payment_option = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+
+class JuniorSecondary(db.Model):
+    __tablename__ = 'junior_secondary'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    question = db.Column(db.String(250), nullable=False)
+    correct_option = db.Column(db.String(250), nullable=False)
+    wrong_option1 = db.Column(db.String(250), nullable=False)
+    wrong_option2 = db.Column(db.String(250), nullable=False)
+    wrong_option3 = db.Column(db.String(250), nullable=False)
+    wrong_option4 = db.Column(db.String(250), nullable=False)
+    
+
+class SeniorSecondary(db.Model):
+    __tablename__ = 'senior_secondary'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    question = db.Column(db.String(250), nullable=False)
+    correct_option = db.Column(db.String(250), nullable=False)
+    wrong_option1 = db.Column(db.String(250), nullable=False)
+    wrong_option2 = db.Column(db.String(250), nullable=False)
+    wrong_option3 = db.Column(db.String(250), nullable=False)
+    wrong_option4 = db.Column(db.String(250), nullable=False)
+
+
+class University(db.Model):
+    __tablename__ = 'university'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    question = db.Column(db.String(250), nullable=False)
+    correct_option = db.Column(db.String(250), nullable=False)
+    wrong_option1 = db.Column(db.String(250), nullable=False)
+    wrong_option2 = db.Column(db.String(250), nullable=False)
+    wrong_option3 = db.Column(db.String(250), nullable=False)
+    wrong_option4 = db.Column(db.String(250), nullable=False)
+
+class Account(db.Model):
+    __tablename__ = 'account'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    total_correct = db.Column(db.Integer)
+    total_failed = db.Column(db.Integer)
+    total_attempted = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+class Level(db.Model):
+    __tablename__ = 'levels'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    amount = db.Column(db.Integer, nullable=False)
+
+class Attempt(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    question_id = db.Column(db.Integer, unique=True, nullable=False)
+    user_selection = db.Column(db.String(255), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now)

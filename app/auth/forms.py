@@ -29,6 +29,9 @@ class CreateAccountForm(FlaskForm):
     last_name = StringField('First Name',
                             id='last_name',
                             validators=[DataRequired()])
+    dob = StringField('Date of Birth',
+                            id='dob',
+                            validators=[DataRequired()])
     phone = StringField('Phone',
                         id='phone',
                         validators=[DataRequired()])
