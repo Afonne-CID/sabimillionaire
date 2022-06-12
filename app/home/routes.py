@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from app.home import blueprint
 from app.home.forms import CreatePayment
 from flask_login import current_user, logout_user
-from flask import redirect, render_template, request, url_for, jsonify
+from flask import redirect, render_template, request, url_for, jsonify, abort
 from flask_login import login_required
 from jinja2 import TemplateNotFound
 from ..models import *
@@ -46,40 +46,57 @@ def free_trivia():
     id = current_user.get_id()
 
     if request.method == 'POST':
-        if 'start' in request.form:
-            cur_level = 1
-            cnt = 0
+        try:
+            age = age_calculator(User.query.get(id).dob)
+            base_table = db_table_selector(age)
 
-        if 'next' in request.form:
-            cur_level = int(request.form['level'])
-            cnt = int(request.form['cnt'])
-            question_id = request.form['question-id']
-            option_selected = request.form.get('unique-selection', None)
+            if 'start' in request.form:
+                cur_level = 1
+                cnt = 0
 
-            if cnt == 5:
-                reward = Level.query.get(cur_level).amount
+            if 'next' in request.form:
+                cur_level = int(request.form['level'])
+                cnt = int(request.form['cnt'])
+                question_id = request.form['question-id']
+                user_selection = request.form.get('unique-selection', '')
 
-        age = age_calculator(User.query.get(id).dob)
-        base_table = db_table_selector(age)
-        if cur_level > 1:
-            base_table = db_table_next(base_table)
-    
-        q_list = list(Attempt.query.filter(Attempt.user_id==id))
-        questions_in_db = len(base_table.query.all())
+                attempt = Attempt(user_id=id,
+                                question_id=question_id,
+                                user_selection=user_selection,
+                                category=base_table.__name__)
 
-        comp = 5
-        if questions_in_db < 5:
-            comp = questions_in_db
+                try:
+                    db.session.add(attempt)
+                    db.session.commit()
+                except Exception as e:
+                    db.session.rollback()
+                    print(e)
+                    abort(500)
+        
+            if cur_level > 1:
+                base_table = db_table_next(base_table)
 
-        if cnt + 1 <= comp:
-            
-            cnt += 1
+            '''Will increase the limite to 100 later'''
+            q_list = [attempt.question_id for attempt in Attempt.query.\
+                    filter(Attempt.user_id==id).\
+                    order_by(Attempt.created_at.desc()).limit(2).all()]
 
-            tmp = random.randint(0, questions_in_db)
+            questions_in_db = len(base_table.query.all())
 
-            try:
+            comp = 5
+            if questions_in_db < 5:
+                comp = questions_in_db
+
+            if cnt + 1 <= comp:
+                
+                cnt += 1
+
+                tmp = random.randint(0, questions_in_db)
+
                 question = base_table.query.get(tmp)
                 while not question or tmp in q_list:
+                    print('got here')
+
                     tmp = random.randint(0, questions_in_db)
                     if tmp not in q_list:
                         question = base_table.query.get(tmp)
@@ -101,10 +118,57 @@ def free_trivia():
                     cnt=cnt
                 )
 
-            except Exception as e:
-                '''
-                '''
-                return e
+            else:
+                '''Display result'''
+                reward = Level.query.get(cur_level).amount
+
+                attempts = Attempt.query.filter(Attempt.user_id==id).\
+                    order_by(Attempt.created_at.asc()).limit(5).all()
+
+                print(attempts)
+                all_questions = []
+                passed = 0
+                for attempt in attempts:
+                    question_id = attempt.question_id
+                    user_selection = attempt.user_selection
+                    category = eval(attempt.category.split('.')[-1].strip('>\''))
+                    question = category.query.get(question_id)
+                    each_question = []
+
+                    if user_selection == question.correct_option:
+                        passed += 1
+                    
+                    options = shuffle_list([question.correct_option,
+                                            question.wrong_option1,
+                                            question.wrong_option2,
+                                            question.wrong_option3,
+                                            question.wrong_option4])
+
+                    each_question.append(question.question)
+                    each_question.append(question.correct_option)
+                    each_question.append(user_selection)
+                    each_question.append(options)
+                    all_questions.append(each_question)
+
+                print(all_questions)
+
+                if passed == comp:
+                    return render_template(
+                        'home/won.html'
+                    )
+
+                else:
+                    return render_template(
+                        'home/answers.html',
+                        all_questions=all_questions
+                    )
+
+        except Exception as e:
+            '''
+            '''
+            raise Exception(e)
+
+
 
                 
     elif request.method == 'GET':
