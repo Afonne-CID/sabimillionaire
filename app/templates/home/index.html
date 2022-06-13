@@ -9,6 +9,25 @@
 
     {% if current_user.is_authenticated %}
 
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    {% if message == 'no attempts left' %}
+                        <br><br>
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin:60px!important;">
+                            <strong>
+                                You don't have any attempts left!
+                            </strong>
+                            You should check if you have money in your wallet to buy a play & win ticket or fund your account to buy one. Alternatively, you can play our free trivia quiz.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
         <div class="pcoded-content">
             <div class="pcoded-inner-content">
                 <!-- [ breadcrumb ] start -->
@@ -19,19 +38,13 @@
                         <!-- [ Main Content ] start -->
                         <div class="row">
                             <!--[ daily sales section ] start-->
-                            <div class="col-md-12">
-                                <a href="/make-payment">
-                                    <button type="button" class="btn btn-primary float-right" title="btn btn-primary" data-toggle="tooltip">Initiate New Payment</button>
-                                </a>
-                                <br>
-                            </div>
                             <div class="col-md-6 col-xl-2">
                                 <div class="card daily-sales">
                                     <div class="card-block">
                                         <h6 class="mb-4">Attempted</h6>
                                         <div class="row d-flex align-items-center">
                                             <div class="col-9">
-                                                <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>{{ current_user.currency }} {{ total_received }}</h3>
+                                                <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>{{ total_attempted }}</h3>
                                             </div>
                                         </div>
                                         <div class="progress m-t-30" style="height: 7px;">
@@ -46,7 +59,7 @@
                                         <h6 class="mb-4">Correct</h6>
                                         <div class="row d-flex align-items-center">
                                             <div class="col-9">
-                                                <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>{{ current_user.currency }} {{ total_deposit}}</h3>
+                                                <h3 class="f-w-300 d-flex align-items-center m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>{{ total_correct }}</h3>
                                             </div>
                                         </div>
                                         <div class="progress m-t-30" style="height: 7px;">
@@ -61,7 +74,7 @@
                                         <h6 class="mb-4">Failed</h6>
                                         <div class="row d-flex align-items-center">
                                             <div class="col-9">
-                                                <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="feather icon-arrow-down text-c-red f-30 m-r-10"></i>{{ current_user.currency }} {{ total_sent }}</h3>
+                                                <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="feather icon-arrow-down text-c-red f-30 m-r-10"></i>{{ total_failed }}</h3>
                                             </div>
                                         </div>
                                         <div class="progress m-t-30" style="height: 7px;">
@@ -76,7 +89,7 @@
                                         <h6 class="mb-4">Grade</h6>
                                         <div class="row d-flex align-items-center">
                                             <div class="col-9">
-                                                <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>{{ current_user.currency }} {{ current_user.wallet_balance }}</h3>
+                                                <h3 class="f-w-300 d-flex align-items-center  m-b-0"><i class="feather icon-arrow-up text-c-green f-30 m-r-10"></i>{{ grade|safe }}</h3>
                                             </div>
                                         </div>
                                         <div class="progress m-t-30" style="height: 7px;">

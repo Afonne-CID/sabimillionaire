@@ -1,4 +1,5 @@
 from doctest import debug_script
+from email.policy import default
 import mimetypes
 from . import db
 from flask_login import UserMixin
@@ -102,10 +103,13 @@ class University(db.Model):
 class Account(db.Model):
     __tablename__ = 'account'
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    total_correct = db.Column(db.Integer)
-    total_failed = db.Column(db.Integer)
-    total_attempted = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    total_correct = db.Column(db.Integer, default=0)
+    total_failed = db.Column(db.Integer, default=0)
+    total_attempted = db.Column(db.Integer, default=0)
+    slots = db.Column(db.Integer, default=0)
+    coin_balance = db.Column(db.Integer, default=0)
+    wallet_balance = db.Column(db.Float, default=0.0)
 
 class Level(db.Model):
     __tablename__ = 'levels'

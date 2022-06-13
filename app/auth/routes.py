@@ -7,7 +7,7 @@ from flask_login import (
 from app import db, login_manager
 from app.auth import blueprint
 from app.auth.forms import LoginForm, CreateAccountForm
-from ..models import User
+from ..models import User, Account
 from app.auth.util import verify_pass
 
 # Login & Registration
@@ -70,9 +70,20 @@ def register():
                                    form=create_account_form)
 
         # else we can create the user
-        user = User(**request.form)
-        db.session.add(user)
-        db.session.commit()
+        try:
+            user = User(**request.form)
+            db.session.add(user)
+            db.session.flush()
+
+            account = Account(user_id=user.id)
+
+            db.session.add(account)
+            
+            db.session.commit()
+
+        except Exception as e:
+            db.session.rollback()
+            raise e
 
         return render_template('accounts/register.html',
                                msg='User created please <a href="/login">login</a>',

@@ -55,7 +55,7 @@ function resetProgressBar() {
 // }
 
 // $('button#next').click( function(e) {
-//   e.preventDefault();
+//     e.preventDefault();
 //     console.log($('form#questions-form').serialize())
 //     $.ajax({
 //         url: '/free-trivia',

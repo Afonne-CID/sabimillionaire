@@ -10,7 +10,8 @@
 {% block content %}
 
     {% if current_user.is_authenticated %}
-        {% if cnt %} 
+
+        {% if cnt and question %} 
             <br><br> 
             <div class="tw-relative">
                 <div class="tw-max-w-xl tw-mx-auto tw-my-2">
@@ -85,19 +86,50 @@
                             <input type="hidden" value="{{ cnt }}" name="cnt">
                             <input type="hidden" value="{{ level }}" name="level">
                             <input type="hidden" value="{{ question.id }}" name="question-id">
+
                             {% for option in options %}
                                 <input type="radio" name="unique-selection" value="{{ option }}">
                                 <label for="{{ option }}" class="question-option">{{ option }}</label><br><br>
                             {% endfor %}
 
                             <div>
-                                <button id="next" name="next" class="tw-px-2 tw-py-3 tw-w-full tw-rounded-3xl tw-my-3 tw-flex tw-justify-center tw-items-center tw-font-bold tw-max-w-xl tw-mx-auto tw-bg-ct-games tw-text-white tw-shadow-lg"><span class="tw-mr-2">Next</span> <svg data-v-d0f6a7bc="" aria-labelledby="Arrow Right" role="presentation" width="20" height="20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" class="tw-fill-current currentColor tw-animate-next"><title data-v-d0f6a7bc="" id="Arrow Right" lang="en">Arrow Right icon</title> <g data-v-d0f6a7bc=""><g class="b" data-v-d0f6a7bc=""><path d="M30.5234,45.0035a1.2357,1.2357,0,0,1-.5113-.1111,1.3912,1.3912,0,0,1-.8208-1.2848V33.5521H1.5541A1.365,1.365,0,0,1,.222,32.1632V17.9688A1.3605,1.3605,0,0,1,1.5541,16.58H29.1913V6.5174a1.3912,1.3912,0,0,1,.8208-1.2848,1.2831,1.2831,0,0,1,1.4532.3056L49.2532,24.08a1.4233,1.4233,0,0,1,0,1.9652L31.4653,44.5938A1.299,1.299,0,0,1,30.5234,45.0035Z" class="c"></path></g></g></svg></button>
+                                <button type="submit" id="next" name="next" class="tw-px-2 tw-py-3 tw-w-full tw-rounded-3xl tw-my-3 tw-flex tw-justify-center tw-items-center tw-font-bold tw-max-w-xl tw-mx-auto tw-bg-ct-games tw-text-white tw-shadow-lg"><span class="tw-mr-2">Next</span> <svg data-v-d0f6a7bc="" aria-labelledby="Arrow Right" role="presentation" width="20" height="20" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" class="tw-fill-current currentColor tw-animate-next"><title data-v-d0f6a7bc="" id="Arrow Right" lang="en">Arrow Right icon</title> <g data-v-d0f6a7bc=""><g class="b" data-v-d0f6a7bc=""><path d="M30.5234,45.0035a1.2357,1.2357,0,0,1-.5113-.1111,1.3912,1.3912,0,0,1-.8208-1.2848V33.5521H1.5541A1.365,1.365,0,0,1,.222,32.1632V17.9688A1.3605,1.3605,0,0,1,1.5541,16.58H29.1913V6.5174a1.3912,1.3912,0,0,1,.8208-1.2848,1.2831,1.2831,0,0,1,1.4532.3056L49.2532,24.08a1.4233,1.4233,0,0,1,0,1.9652L31.4653,44.5938A1.299,1.299,0,0,1,30.5234,45.0035Z" class="c"></path></g></g></svg></button>
                             </div>
                         </form>
                     </div>         
-
                 </div>
             </div>
+        {% elif won %}
+
+            <div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <form method="post" action="">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle">Congratulations!</h5>
+                            <button type="submit" class="close" id="close" name="cashout" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                                {% if level == 5 %}
+                                    <p>Hurray!<br>You won the grand price.</p>
+                                {% else %}
+                                    <p>You aced it like it was nothing :-). You won!.</p>
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <input type="hidden" value="{{ level }}" name="level">
+                                <input type="hidden" value="{{ reward }}" name="reward">
+                                <input type="hidden" value="0" name="cnt">
+                                <button onclick=progressBar() type="submit" class="btn btn-primary" name="next-level">Next Level</button>
+                                <button type="submit" class="btn btn-secondary" data-dismiss="modal" name="cashout" >Cashout {{ reward }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
         {% else %}
             <br><br>
             <div>
@@ -137,13 +169,20 @@
                         </div>
                         <br><br>
                         <div class="tw-relative">
-                            <form id="start-test" method="post" action="">
-                                <input type="hidden" value="{{ level }}" name="level">
-                                <input type="hidden" value="{{ cnt }}" name="cnt">
-                                <button onclick="progressBar()" class="btn btn-success btn-lg-primary center" name="start">Start Free Test</a></p><button>
-                            </form>
+                            <center>
+                                <form method="post" action="/free-trivia" style="display: inline-block !important;">
+                                    <input type="hidden" value="{{ level }}" name="level">
+                                    <input type="hidden" value="{{ cnt }}" name="cnt">
+                                    <button onclick="progressBar()" class="btn btn-success btn-primary btn-lg" name="start">Start Free Test</a></p><button>
+                                </form>
+                                <form method="post" action="/play-and-win" style="display: inline-block !important;">
+                                    <input type="hidden" value="{{ level }}" name="level">
+                                    <input type="hidden" value="{{ cnt }}" name="cnt">
+                                    <button onclick="progressBar()" class="btn btn-success btn-primary btn-lg" name="start">Play & Win</a></p><button>
+                                </form>
+                            </center>
                         </div>
-                    </div>        
+                    </div>
                 </div>
             </div>
             
@@ -155,6 +194,15 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-        <script type="text/javascript" src="/static/assets/js/questions.js"></script>
+    <script type="text/javascript">
+        var close = document.getElementById('close');
+
+        close.addEventListener('click', function() {
+            close.style.display = null;
+            $('#exampleModalCenter').css('display','none');
+        }, false);
+        // $('#exampleModalCenter').removeClass('show');
+    </script>
+    <script type="text/javascript" src="/static/assets/js/questions.js"></script>
 {% endblock javascripts %}
     

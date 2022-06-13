@@ -5,11 +5,42 @@
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
     <link rel="stylesheet" href="/static/assets/css/questions.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 {% endblock stylesheets %}
 
 {% block content %}
 
-    {% if current_user.is_authenticated %}  
+    {% if current_user.is_authenticated %}
+
+
+        <div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">You Lost!</h5>
+                <button type="button" class="close" id="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                <p>You passed {{ passed }} out of {{ cnt }}.</p>
+                </div>
+                <div class="modal-footer">
+                    <form id="start-test" action="" method="post">
+                        <input type="hidden" value="{{ level }}" name="level">
+                        <input type="hidden" value="{{ cnt }}" name="cnt">
+                        {% if paid %}
+                            <button onclick="progressBar()" type="submit" class="btn btn-secondary" name="start">{{ attempts_left }} Attempts Left</button>
+                        {% else %}
+                            <button onclick="progressBar()" type="submit" class="btn btn-secondary" name="start">Try Again</button>
+                        {% endif %}
+                    </form>
+                    <button type="button" id="review" class="btn btn-primary" data-dismiss="modal">Review</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
         {% for question in all_questions %}
             <div class="tw-relative">
                 <div class="tw-max-w-xl tw-mx-auto tw-my-2">
@@ -79,12 +110,12 @@
                                             <div class="tw-flex tw-items-center">
                                                 <div>{{ loop.index }}</div>
                                                 <div class="{% if option == question[1] %} tw-font-bold tw-text-center tw-mx-2 tw-text-ct-fun-facts-mid-tone
-                                                            {% elif question[2] and option == question[2] %} tw-font-bold tw-text-center tw-mx-2 tw-text-ct-qa
+                                                            {% elif option == question[2] != question[1] %} tw-font-bold tw-text-center tw-mx-2 tw-text-ct-qa
                                                             {% else %} tw-font-bold tw-text-center tw-mx-2 tw-text-ct-games
                                                             {% endif %}">
                                                         {{ option }}
                                                 </div>
-                                                {% if option != question[1] and option == question[2] %}
+                                                {% if option == question[2] and option != question[1] %}
                                                     <svg data-v-d0f6a7bc="" aria-labelledby="X sign" role="presentation" width="24" height="24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 50 50" class="tw-fill-current tw-text-ct-qa" componentId="ct-icon-times-solid">
                                                         <title data-v-d0f6a7bc="" id="X sign" lang="en">X sign icon</title>
                                                         <g data-v-d0f6a7bc="">
@@ -112,6 +143,22 @@
 
 <!-- Specific Page JS goes HERE  -->
 {% block javascripts %}
-        <script type="text/javascript" src="/static/assets/js/questions.js"></script>
+<script type="text/javascript">
+    var close = document.getElementById('close');
+    var review = document.getElementById('review');
+
+    close.addEventListener('click', function() {
+        close.style.display = null;
+        $('#exampleModalCenter').css('display','none');
+    }, false);
+
+    review.addEventListener('click', function() {
+        review.style.display = null;
+        $('#exampleModalCenter').css('display','none');
+    }, false);
+
+    
+</script>
+    <script type="text/javascript" src="/static/assets/js/questions.js"></script>
 {% endblock javascripts %}
     

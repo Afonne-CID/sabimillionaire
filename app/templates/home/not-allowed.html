@@ -1,0 +1,36 @@
+
+{% extends "layouts/primary.html" %}
+
+{% block title %} Star Child {% endblock %} 
+
+<!-- Specific CSS goes HERE -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %} 
+
+    <center>
+        <div class="wrap">
+            <div class="header">
+                <div class="logo">
+                    <h1><a href="#">Oops</a></h1>
+                </div>
+            </div>
+    
+            <div class="content">
+                <img src="/static/assets/images/error-img.png" title="error">
+                <!---728x90--->
+                <p style="font-size:30px;"><span><label></label>...</span>The page you were visiting requires Javascript to be active</p>
+                
+                <a href="home.html" style="font-size:18px;">Back To Home</a>
+                <!---728x90--->
+            </div>
+            <!--End-Cotent------>
+        </div>
+    </center>
+
+{% include 'includes/footer.html' %}
+        
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}{% endblock javascripts %}
