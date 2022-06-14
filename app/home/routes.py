@@ -236,6 +236,8 @@ def free_trivia():
 def play_and_win():
 
     id = current_user.get_id()
+    account = Account.query.filter_by(user_id=id).first()
+    attempts_left = account.slots
 
     if request.method == 'POST':
         try:
@@ -251,7 +253,6 @@ def play_and_win():
 
             if 'cashout' in request.form:
                 reward = float(request.form['reward'])
-                account = Account.query.filter_by(user_id=id).first()
                 account.wallet += reward
 
                 try:
@@ -263,12 +264,14 @@ def play_and_win():
                 return render_template('home/index.html')
 
             if 'start' in request.form:
-                attempts_left = Account.query.filter_by(user_id=id).first().slots
 
                 if attempts_left <= 0:
                     flash('no attempts left')
                     return redirect(url_for('home_blueprint.index'))
                 else:
+                    account.slots -= 1
+                    db.session.commit()
+
                     cur_level = 0
                     cnt = 0
 
