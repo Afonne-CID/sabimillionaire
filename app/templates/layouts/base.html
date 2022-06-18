@@ -34,18 +34,27 @@
         </div>
     </div>
     
-    <!-- Top Bar -->
-    {% include 'includes/navigation.html' %}
+    <!-- class="pcoded-main-container"  -->
+    <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full" 
+        data-sidebar-position="absolute" data-header-position="absolute" data-boxed-layout="full">
 
-    <!-- SideBar -->
-    {% include 'includes/sidebar.html' %}
+        {% include 'includes/navigation.html' %}
 
-    <div class="pcoded-main-container">
-        <div class="pcoded-wrapper">
+        {% include 'includes/sidebar.html' %}
 
-            {% block content %}{% endblock content %}
+        <!-- ============================================================== -->
+        <!-- Page wrapper  -->
+        <!-- ============================================================== -->
+        <!-- <div class="page-wrapper"> -->
+        <div class="page-wrapper">
 
+            {% block content %}{% endblock content %} 
+            
         </div>
+        <!-- ============================================================== -->
+        <!-- End Page wrapper  -->
+        <!-- ============================================================== -->
+
     </div>
 
     {% include 'includes/scripts.html' %}

@@ -2,54 +2,56 @@
     enable JavaScript and then reload this page in order to continue. </h3> 
     <meta HTTP-EQUIV="refresh" content=0;url="not-allowed.html"></noscript>
 
-<div class="scroll-sidebar">
-    <nav class="pcoded-navbar">
-        <div class="navbar-wrapper">
-            <div class="navbar-brand header-logo sidebar-item">
-                <a 
-                   href="/" class="b-brand">
-                    <div class="b-bg">
-                        <i class="feather icon-trending-up"></i>
-                    </div>
-                    <span class="b-title">
-                        {% if current_user.is_authenticated %}
-                            {{ current_user.first_name + ' ' + current_user.last_name }}
-                        {% else %}
-                            Sabimillionaire
-                        {% endif %}
-                    </span>
-                </a>
-                <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
+<aside class="left-sidebar" data-sidebarbg="skin6">
+    <div class="scroll-sidebar">
+        <nav class="pcoded-navbar">
+            <div class="navbar-wrapper">
+                <div class="navbar-brand header-logo">
+                    <a 
+                    href="{{ url_for('home_blueprint.index') }}" class="b-brand">
+                        <div class="b-bg">
+                            <i class="feather icon-trending-up"></i>
+                        </div>
+                        <span class="b-title">
+                            {% if current_user.is_authenticated %}
+                                {{ current_user.username }}
+                            {% else %}
+                                Sabimillionaire
+                            {% endif %}
+                        </span>
+                    </a>
+                    <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
+                </div>
+                <div class="navbar-content scroll-div">
+                    <ul class="nav pcoded-inner-navbar">
+                        <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" 
+                            class="nav-item sidebar-item {% if 'index' in segment %} active {% endif %}">
+                            <a href="{{ url_for('home_blueprint.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+                        </li>
+                        <!-- <li data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe" class="nav-item pcoded-hasmenu">
+                            <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Transactions</span></a>
+                            <ul class="pcoded-submenu">
+                                <li><a href="/sent-transactions.html" class="">Sent</a></li>
+                                <li><a href="/received-transactions.html" class="">Received</a></li>
+                                <li><a href="/withdrawals.html" class="">Withdrawals</a></li>
+                            </ul>
+                        </li> -->
+                        <li data-username="form elements advance componant validation masking wizard picker select" 
+                            class="nav-item sidebar-item {% if 'ui-forms' in segment %} active {% endif %}">
+                            <a href="{{ url_for('home_blueprint.play_game') }}" class="nav-link "><span class="pcoded-micon"><i class="fa fa-gamepad" aria-hidden="true"></i></span><span class="pcoded-mtext">Play Game</span></a>
+                        </li>
+                        <li data-username="Table bootstrap datatable footable" 
+                            class="nav-item sidebar-item {% if 'ui-tables' in segment %} active {% endif %}">
+                            <a href="{{ url_for('home_blueprint.page_profile') }}" class="nav-link "><span class="pcoded-micon"><i class="fa fa-cogs" aria-hidden="true"></i></span><span class="pcoded-mtext">Profile Settings</span></a>
+                        </li>
+                        <li data-username="Disabled Menu" class="nav-item sidebar-item">
+                            <a href="{{ url_for('auth_blueprint.logout') }}" class="nav-link">
+                                <span class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Logout</span>
+                            </a>
+                        </li>                                     
+                    </ul>
+                </div>
             </div>
-            <div class="navbar-content scroll-div sidebar-item">
-                <ul class="nav pcoded-inner-navbar">
-                    <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" 
-                        class="nav-item sidebar-item {% if 'index' in segment %} active {% endif %}">
-                        <a href="{{ url_for('home_blueprint.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
-                    </li>
-                    <!-- <li data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe" class="nav-item pcoded-hasmenu">
-                        <a href="javascript:" class="nav-link "><span class="pcoded-micon"><i class="feather icon-lock"></i></span><span class="pcoded-mtext">Transactions</span></a>
-                        <ul class="pcoded-submenu">
-                            <li><a href="/sent-transactions.html" class="">Sent</a></li>
-                            <li><a href="/received-transactions.html" class="">Received</a></li>
-                            <li><a href="/withdrawals.html" class="">Withdrawals</a></li>
-                        </ul>
-                    </li> -->
-                    <li data-username="form elements advance componant validation masking wizard picker select" 
-                        class="nav-item sidebar-item {% if 'ui-forms' in segment %} active {% endif %}">
-                        <a href="{{ url_for('home_blueprint.play_game') }}" class="nav-link "><span class="pcoded-micon"><i class="fa fa-gamepad" aria-hidden="true"></i></span><span class="pcoded-mtext">Play Game</span></a>
-                    </li>
-                    <li data-username="Table bootstrap datatable footable" 
-                        class="nav-item sidebar-item {% if 'ui-tables' in segment %} active {% endif %}">
-                        <a href="{{ url_for('home_blueprint.page_profile') }}" class="nav-link "><span class="pcoded-micon"><i class="fa fa-cogs" aria-hidden="true"></i></span><span class="pcoded-mtext">Profile Settings</span></a>
-                    </li>
-                    <li data-username="Disabled Menu" class="nav-item sidebar-item">
-                        <a href="{{ url_for('auth_blueprint.logout') }}" class="nav-link">
-                            <span class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Logout</span>
-                        </a>
-                    </li>                                     
-                </ul>
-            </div>
-        </div>
-    </nav>
-</div>
+        </nav>
+    </div>
+</aside>

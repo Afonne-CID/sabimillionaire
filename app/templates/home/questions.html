@@ -10,6 +10,23 @@
 {% block content %}
 
     {% if current_user.is_authenticated %}
+    
+    <div style="margin-left:20px">
+
+        <div class="row page-titles">
+            <div class="page-breadcrumb" style="margin:10px!important;">
+                <div class="row page-titles">
+                    <div class="col-md-5 col-12 align-self-center">
+                        <h3 class="text-themecolor mb-0">Play Game</h3>
+                        <ol class="breadcrumb mb-0 p-0 bg-transparent">
+                            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                            <li class="breadcrumb-item active">Play Game</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         {% if cnt and question %} 
             <br><br> 
@@ -99,6 +116,7 @@
                     </div>         
                 </div>
             </div>
+        
         {% elif won %}
 
             <div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;">
@@ -131,71 +149,80 @@
             </div>
 
         {% else %}
-            <br>
             <div>
-                <div class="tw-mb-2">
-                    <!----> 
-                    <div class="tw-relative tw-pt-1">
-                        <div class="
-                        tw-overflow-hidden
-                        tw-h-2
-                        tw-text-xs
-                        tw-flex
-                        tw-rounded-full
-                        tw-bg-ct-light-grey
-                        ">
-                        <div class="
-                        tw-shadow-none
-                        tw-flex
-                        tw-flex-col
-                        tw-text-center
-                        tw-whitespace-nowrap
-                        tw-text-white
-                        tw-justify-center
-                        tw-bg-ct-users-actions" style="width: 100%;"></div>
-                    </div>
+                <div class="alert alert-success" role="alert" style="font-size: 28px;padding:30px">
+                    <h4 class="alert-heading"><strong>Instructions</strong>!</h4>
+                    <p style="font-size: 22px;">Your're going to be tested for intelligence and speed. So you need to select the right options in time.</p>
+                    <!-- <p class="mb-0" style="font-size: 22px;">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p> -->
                 </div>
-                </div>
-                <div>
                     
-                    <div class="alert alert-success" role="alert" style="font-size: 28px;">
-                        <h4 class="alert-heading"><strong>Instructions</strong>!</h4>
-                        <p style="font-size: 22px;">Your're going to be tested for intelligence and speed. So you need to select the right options in time.</p>
-                        <hr><hr><hr>
-                        <!-- <p class="mb-0" style="font-size: 22px;">Whenever you need to, be sure to use margin utilities to keep things nice and tidy.</p> -->
-                    </div>
+                <div class="tw-max-w-xl tw-mx-auto" active="true" order="1" _id="5fdafca90b81ed117b28733c" questionid="5fdafca90b81ed117b28733c" tags="5fdafc920b81ed117b286e4a,5eb985c0a408a52cbbcd61df" incorrect="Cyclops,Axis,Tethys" applicableforimagegeneration="true" createdat="2020-12-17T06:37:29.246Z" updatedat="2022-01-19T17:40:09.510Z" __v="0" correctcount="37" incorrectcount="8,7,3" imgwidths="600,400,200" answers="[object Object],[object Object],[object Object],[object Object]" totalcount="55" noscripttext="text: Who was the giant Hercules tricked into holding up the sky in his stead?, correct: Atlas, incorrect: Cyclops,Axis,Tethys, fun fact: After killing his family in a fit of madness induced by Hera, Hercules had to pay penance by completing 12 almost impossible tasks.">
                     
-                    <div class="tw-max-w-xl tw-mx-auto" active="true" order="1" _id="5fdafca90b81ed117b28733c" questionid="5fdafca90b81ed117b28733c" tags="5fdafc920b81ed117b286e4a,5eb985c0a408a52cbbcd61df" incorrect="Cyclops,Axis,Tethys" applicableforimagegeneration="true" createdat="2020-12-17T06:37:29.246Z" updatedat="2022-01-19T17:40:09.510Z" __v="0" correctcount="37" incorrectcount="8,7,3" imgwidths="600,400,200" answers="[object Object],[object Object],[object Object],[object Object]" totalcount="55" noscripttext="text: Who was the giant Hercules tricked into holding up the sky in his stead?, correct: Atlas, incorrect: Cyclops,Axis,Tethys, fun fact: After killing his family in a fit of madness induced by Hera, Hercules had to pay penance by completing 12 almost impossible tasks.">
-                        
-                        <!-- <div class="tw-px-4 tw-rounded-3xl tw-shadow-lg tw--mt-3 tw-pb-2 tw-pt-4">
-                            <div class="tw-text-center tw-text-ct-fun-facts tw-text-md tw-mb-1">
-                            </div>
-                            <section class="tw-rounded-3xl tw-p-3 tw-text-center tw-bg-ct-fun-facts-lighterer tw-text-ct-fun-facts-dark tw-text-xl">
-                                <strong>Instructions</strong>
-                                <p>Your're going to be tested for intelligence and speed.<br>So you need to select the right options in time.</p>
-                            </section>
-                        </div> -->
-
-                        <br><br>
-                        <div class="tw-relative">
-                            <center>
-                                <form method="post" action="/free-trivia" style="display: inline-block !important;">
-                                    <input type="hidden" value="{{ level }}" name="level">
-                                    <input type="hidden" value="{{ cnt }}" name="cnt">
-                                    <button onclick="progressBar()" class="btn btn-success btn-primary btn-lg" name="start">Start Free Test</a></p><button>
-                                </form>
-                                <form method="post" action="/play-and-win" style="display: inline-block !important;">
-                                    <input type="hidden" value="{{ level }}" name="level">
-                                    <input type="hidden" value="{{ cnt }}" name="cnt">
-                                    <button onclick="progressBar()" class="btn btn-success btn-primary btn-lg" name="start">Play & Win</a></p><button>
-                                </form>
-                            </center>
+                    <!-- <div class="tw-px-4 tw-rounded-3xl tw-shadow-lg tw--mt-3 tw-pb-2 tw-pt-4">
+                        <div class="tw-text-center tw-text-ct-fun-facts tw-text-md tw-mb-1">
                         </div>
-                    </div>
+                        <section class="tw-rounded-3xl tw-p-3 tw-text-center tw-bg-ct-fun-facts-lighterer tw-text-ct-fun-facts-dark tw-text-xl">
+                            <strong>Instructions</strong>
+                            <p>Your're going to be tested for intelligence and speed.<br>So you need to select the right options in time.</p>
+                        </section>
+                    </div> -->
+
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="card text-white bg-primary mb-3">
+                                <div class="card-body">
+                                <center>
+                                    <form method="post" action="/play-and-win" style="display: inline-block !important;">
+                                        <input type="hidden" value="{{ level }}" name="level">
+                                        <input type="hidden" value="{{ cnt }}" name="cnt">                                      
+                                        <h5 class="card-title">Play & Win</h5>
+                                        <p class="card-text"></p>
+                                        <button onclick="progressBar()" name="start" class="btn btn-success">Play & Win</button>
+                                        <p class="card-text"></p>
+                                    </form>
+
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="card text-white bg-success mb-3">
+                                <div class="card-body">
+                                    <center>
+
+                                        <form method="post" action="/free-trivia" style="display: inline-block !important;">
+                                            <input type="hidden" value="{{ level }}" name="level">
+                                            <input type="hidden" value="{{ cnt }}" name="cnt">
+                                            <h5 class="card-title">Free Trivia Game</h5>
+                                            <p class="card-text"></p>
+                                            <button onclick="progressBar()" name="start" class="btn btn-primary">Free Trivia</button>
+                                            <p class="card-text"></p>
+                                        </form>
+
+                                    </center>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    <!-- <div class="tw-relative">
+                        <center>
+                            <form method="post" action="/free-trivia" style="display: inline-block !important;">
+                                <input type="hidden" value="{{ level }}" name="level">
+                                <input type="hidden" value="{{ cnt }}" name="cnt">
+                                <button onclick="progressBar()" class="btn btn-success btn-primary btn-lg" name="start">Start Free Test</a></p><button>
+                            </form>
+                            <form method="post" action="/play-and-win" style="display: inline-block !important;">
+                                <input type="hidden" value="{{ level }}" name="level">
+                                <input type="hidden" value="{{ cnt }}" name="cnt">
+                                <button onclick="progressBar()" class="btn btn-success btn-primary btn-lg" name="start">Play & Win</a></p><button>
+                            </form>
+                        </center>
+                    </div> -->
+
                 </div>
-            </div>
-            
+            </div>            
         {% endif %}
+    </div>
     {% endif %}
 
 

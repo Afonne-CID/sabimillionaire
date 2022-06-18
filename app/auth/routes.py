@@ -1,6 +1,6 @@
-import mimetypes
+import imghdr
 import os
-from flask import render_template, redirect, request, url_for, current_app
+from flask import render_template, redirect, request, url_for, current_app, abort
 from flask_login import (
     current_user,
     login_user,
@@ -84,7 +84,8 @@ def register():
                                    success=False,
                                    form=create_account_form)
 
-        if not headshot:
+        filename = secure_filename(headshot.filename)
+        if not headshot or filename == '':
             return render_template('accounts/register.html',
                                    msg='Headshot is required',
                                    success=False,
@@ -101,11 +102,16 @@ def register():
 
             account = Account(user_id=user.id)
 
-            filename = secure_filename(headshot.filename)
+            file_ext = os.path.splitext(filename)[1]
+            if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
+                    file_ext != validate_image(headshot.stream):
+                        abort(400)
+
+            filename = '{}.{}'.format(user.username, file_ext)#secure_filename(headshot.filename)
             headshot.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
             headshot = HeadShot(name='static/uploads/'+str(filename),
-                                user_id=user.id)
+                            user_id=user.id)
 
             db.session.add(headshot)
             db.session.add(account)
@@ -150,3 +156,12 @@ def not_found_error(error):
 @blueprint.errorhandler(500)
 def internal_error(error):
     return render_template('home/page-500.html'), 500
+
+
+def validate_image(stream):
+    header = stream.read(512)
+    stream.seek(0) 
+    format = imghdr.what(None, header)
+    if not format:
+        return None
+    return '.' + (format if format != 'jpeg' else 'jpg')

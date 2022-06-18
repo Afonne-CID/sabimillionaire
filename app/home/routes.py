@@ -34,17 +34,19 @@ def index():
     id = current_user.get_id()
     account = Account.query.filter_by(user_id=id).first()
     grade = grade_finder(account.total_correct, account.total_attempted)
+    headshot = HeadShot.query.filter_by(user_id=id).first()
 
     return render_template(
             'home/index.html',
             segment='index',
-            wallet_balance=account.wallet_balance,
+            wallet=account.wallet_balance,
             total_correct=account.total_correct,
             total_failed=account.total_failed,
             total_attempted=account.total_attempted,
             slots=account.slots,
             coin_balance=account.coin_balance,
-            grade=grade
+            grade=grade,
+            filename=headshot.name
         )
 
 
@@ -52,11 +54,15 @@ def index():
 @login_required
 def play_game():
     
+    id = current_user.get_id()
+    headshot = HeadShot.query.filter_by(user_id=id).first()
+
     if request.method == 'GET':
         level = 0
         return render_template(
                 'home/questions.html',
-                level=level
+                level=level,
+                filename=headshot.name
         )
     
     # if request.method == 'POST':
@@ -71,6 +77,8 @@ def play_game():
 def free_trivia():
 
     id = current_user.get_id()
+    headshot = HeadShot.query.filter_by(user_id=id).first()
+
 
     if request.method == 'POST':
         try:
@@ -161,7 +169,8 @@ def free_trivia():
                     level=cur_level,
                     question=question,
                     options=options,
-                    cnt=cnt
+                    cnt=cnt,
+                    filename=headshot.name
                 )
 
             else:
@@ -211,7 +220,8 @@ def free_trivia():
                         passed=passed,
                         question=question,
                         options=options,
-                        cnt=cnt
+                        cnt=cnt,
+                        filename=headshot.name
                     )
 
                 else:
@@ -222,7 +232,8 @@ def free_trivia():
                         reward=reward,
                         # question=question,
                         # options=options,
-                        cnt=cnt
+                        cnt=cnt,
+                        filename=headshot.name
                     )
 
         except Exception as e:
@@ -239,6 +250,8 @@ def play_and_win():
     id = current_user.get_id()
     account = Account.query.filter_by(user_id=id).first()
     attempts_left = account.slots
+    headshot = HeadShot.query.filter_by(user_id=id).first()
+
 
     if request.method == 'POST':
         try:
@@ -250,7 +263,7 @@ def play_and_win():
                 cnt = int(request.form['cnt'])
 
                 if cur_level >= 6:
-                    return render_template('home/index.html')
+                    return render_template('home/index.html', filename=headshot.name)
 
             if 'cashout' in request.form:
                 reward = float(request.form['reward'])
@@ -262,7 +275,7 @@ def play_and_win():
                     db.session.rollback()
                     raise e
 
-                return render_template('home/index.html')
+                return render_template('home/index.html', filename=headshot.name)
 
             if 'start' in request.form:
 
@@ -336,7 +349,8 @@ def play_and_win():
                     level=cur_level,
                     question=question,
                     options=options,
-                    cnt=cnt
+                    cnt=cnt,
+                    filename=headshot.name
                 )
 
             else:
@@ -388,7 +402,8 @@ def play_and_win():
                         passed=passed,
                         question=question,
                         options=options,
-                        cnt=cnt
+                        cnt=cnt,
+                        filename=headshot.name
                     )
 
                 else:
@@ -399,7 +414,8 @@ def play_and_win():
                         reward=reward,
                         # question=question,
                         # options=options,
-                        cnt=cnt
+                        cnt=cnt,
+                        filename=headshot.name
                     )
 
         except Exception as e:
@@ -412,15 +428,16 @@ def page_profile():
     ''''''
     id = current_user.get_id()
     user = User.query.get(id)
+    headshot = HeadShot.query.filter_by(user_id=id).first()
 
     if request.method == 'GET':
         return render_template('home/page-profile.html',
-            filename=HeadShot.query.filter_by(user_id=id).first().name,
+            filename=headshot.name,
             full_name='{} {}'.format(user.first_name, user.last_name),
             username=user.username,
             email=user.email,
             phone=user.phone,
-            countries=Countries.query.all()
+            countries=Countries.query.all(),
         )
     
     elif request.method == 'POST':
@@ -431,6 +448,14 @@ def page_profile():
                 if name and len(name) > 1:
                     user.first_name = name[0]
                     user.last_name = name[1]
+
+                    try:
+                        if name[1:]:
+                            for i in name[1:]:
+                                user.last_name += ' ' + i
+                    except:
+                        pass
+
             if request.form['password']:
                 password = hash_pass(request.form['password'])
                 user.password = password
@@ -449,7 +474,7 @@ def page_profile():
               
         flash('Details successfully updated')
         return render_template('home/page-profile.html',
-            filename=HeadShot.query.filter_by(user_id=id).first().name,
+            filename=headshot.name,
             full_name='{} {}'.format(user.first_name, user.last_name),
             username=user.username,
             email=user.email,
