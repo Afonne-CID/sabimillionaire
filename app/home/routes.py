@@ -61,6 +61,7 @@ def play_game():
         level = 0
         return render_template(
                 'home/questions.html',
+                segment='questions',
                 level=level,
                 filename=headshot.name
         )
@@ -432,6 +433,7 @@ def page_profile():
 
     if request.method == 'GET':
         return render_template('home/page-profile.html',
+            segment='page-profile',
             filename=headshot.name,
             full_name='{} {}'.format(user.first_name, user.last_name),
             username=user.username,
@@ -474,6 +476,7 @@ def page_profile():
               
         flash('Details successfully updated')
         return render_template('home/page-profile.html',
+            segment='page-profile',
             filename=headshot.name,
             full_name='{} {}'.format(user.first_name, user.last_name),
             username=user.username,
@@ -513,6 +516,7 @@ def get_segment(request):
         if segment == '':
             segment = 'index'
 
+        print(segment)
         return segment
 
     except:
