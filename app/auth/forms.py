@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField
 from wtforms import StringField, PasswordField
 from wtforms.validators import Email, DataRequired
 
@@ -14,6 +15,9 @@ class LoginForm(FlaskForm):
 
 
 class CreateAccountForm(FlaskForm):
+    headshot = FileField('Your headshot',
+                         id='headshot',
+                         validators=[DataRequired()])
     username = StringField('Username',
                          id='username_create',
                          validators=[DataRequired()])

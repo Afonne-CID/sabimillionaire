@@ -1,14 +1,22 @@
-from flask import render_template, redirect, request, url_for
+import mimetypes
+import os
+from flask import render_template, redirect, request, url_for, current_app
 from flask_login import (
     current_user,
     login_user,
     logout_user
 )
+from requests import head
 from app import db, login_manager
 from app.auth import blueprint
 from app.auth.forms import LoginForm, CreateAccountForm
-from ..models import User, Account
+from ..models import User, Account, HeadShot
 from app.auth.util import verify_pass
+from werkzeug.utils import secure_filename
+
+# UPLOAD_FOLDER = path + '/static/uploads'
+# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif']) #, 'pdf', 'png', 'jpg', 'jpeg', 'gif'
+
 
 # Login & Registration
 @blueprint.route('/login', methods=['GET', 'POST'])
@@ -48,10 +56,10 @@ def register():
 
     if 'register' in request.form:
 
-
-
         username = request.form['username']
         email = request.form['email']
+        phone = request.form['phone']
+        headshot = request.files['headshot']
 
         # Check usename exists
         user = User.query.filter_by(username=username).first()
@@ -69,14 +77,37 @@ def register():
                                    success=False,
                                    form=create_account_form)
 
+        user = User.query.filter_by(phone=phone).first()
+        if user:
+            return render_template('accounts/register.html',
+                                   msg='Phone already registered',
+                                   success=False,
+                                   form=create_account_form)
+
+        if not headshot:
+            return render_template('accounts/register.html',
+                                   msg='Headshot is required',
+                                   success=False,
+                                   form=create_account_form)
+
+        # file_name = secure_filename(headshot.filename)
+        # mimetype = headshot.mimetype
+
         # else we can create the user
-        try:
+        try:       
             user = User(**request.form)
             db.session.add(user)
             db.session.flush()
 
             account = Account(user_id=user.id)
 
+            filename = secure_filename(headshot.filename)
+            headshot.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+
+            headshot = HeadShot(name='static/uploads/'+str(filename),
+                                user_id=user.id)
+
+            db.session.add(headshot)
             db.session.add(account)
             
             db.session.commit()

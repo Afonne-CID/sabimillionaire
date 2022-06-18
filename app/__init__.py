@@ -1,15 +1,20 @@
+import os
 from flask import Flask
 from flask_login import LoginManager
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from importlib import import_module
 
+
 db = SQLAlchemy()
 login_manager = LoginManager()
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 def register_extensions(app):
     db.init_app(app) # Initializes the database
     login_manager.init_app(app) #Initializes login manager
+    migrate = Migrate(app, db)
 
 def register_blueprints(app):
     for module_name in ('auth', 'home'):
@@ -30,7 +35,9 @@ def create_app():
     '''Construct the core application'''
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object('config.Config')
-    
+    app.config['UPLOAD_FOLDER'] = basedir + '/static/uploads/'
+    app.config['UPLOAD_EXTENSIONS'] = ['.jpg', '.png', '.gif']
+
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)

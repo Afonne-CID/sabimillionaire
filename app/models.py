@@ -1,11 +1,51 @@
 from doctest import debug_script
 from email.policy import default
+from enum import unique
 import mimetypes
 from . import db
+from flask_admin.contrib import sqla
 from flask_login import UserMixin
 from app import db, login_manager
 from app.auth.util import hash_pass
 import datetime
+from wtforms import PasswordField
+
+
+class UserView(sqla.ModelView):
+    column_editable_list = ['active']
+    column_searchable_list = column_editable_list
+    column_exclude_list = ['password']
+    #form_excluded_columns = column_exclude_list
+    column_details_exclude_list = column_exclude_list
+    column_filters = column_editable_list
+    form_overrides = {
+        'password': PasswordField
+    }
+
+
+class AdminUserView(sqla.ModelView):
+    column_editable_list = ['email', 'first_name', 'last_name']
+    column_searchable_list = column_editable_list
+    column_exclude_list = ['password']
+    #form_excluded_columns = column_exclude_list
+    column_details_exclude_list = column_exclude_list
+    column_filters = column_editable_list
+    form_overrides = {
+        'password': PasswordField
+    }
+
+
+# Models
+
+class AdminUser(db.Model, UserMixin):
+    __tablename__ = 'admin_user'
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(255), nullable=False)
+    last_name = db.Column(db.String(255))
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    active = db.Column(db.Boolean())
+    confirmed_at = db.Column(db.DateTime())
 
 
 class User(db.Model, UserMixin):
@@ -17,6 +57,7 @@ class User(db.Model, UserMixin):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True)
+    phone = db.Column(db.String(13))
     dob = db.Column(db.DateTime, nullable=False)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.datetime.now)
     updated_at = db.Column(db.DateTime)
@@ -123,3 +164,15 @@ class Attempt(db.Model):
     user_selection = db.Column(db.String(255), nullable=False)
     category = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now)
+
+class Countries(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    name = db.Column(db.String(255), nullable=False)
+    two_char = db.Column(db.String(10), nullable=False)
+    three_char = db.Column(db.String(10), nullable=False)
+
+
+class HeadShot(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

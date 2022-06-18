@@ -32,51 +32,60 @@
 
                     <!-- Hide the form on success -->
                     {% if not success %}
-                        <form role="form" method="post" action="">
+                        <form role="form" enctype="multipart/form-data" method="post" action="">
+                            <div class="row">
 
-                            {{ form.hidden_tag() }}                    
-
-                            <div class="input-group mb-3">
-                                {{ form.first_name(placeholder="First Name", class="form-control") }}
-                            </div>
-
-                            <div class="input-group mb-3">
-                                {{ form.last_name(placeholder="Last Name", class="form-control") }}
-                            </div>
-
-                            <div class="input-group mb-3">
-                                {{ form.phone(placeholder="Phone", class="form-control") }}
-                            </div>
-
-                            <div class="input-group mb-3 datepicker-holder">
-                                {{ form.dob(placeholder="Date of birth", class="form-control",
-                                    type="date",
-                                    id="datepicker_dob",
-                                    max="2010-01-01",
-                                    min="1900-01-01"
-                                    ) }}
-                            </div>
-
-                            <div class="input-group mb-3">
-                                {{ form.username(placeholder="Username", class="form-control") }}
-                            </div>
-                            
-                            <div class="input-group mb-3">
-                                {{ form.email(placeholder="Email", class="input form-control", type="email") }}
-                            </div>
-
-                            <div class="input-group mb-4">
-                                {{ form.password(placeholder="Password", class="form-control", type="password") }}
-                            </div>
-                            
-                            <div class="form-group text-left">
-                                <div class="checkbox checkbox-fill d-inline">
-                                    <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="">
-                                    <label for="checkbox-fill-a1" class="cr"> Agree with <a href="#">terms</a></label>
+                                {{ form.hidden_tag() }}                    
+                                <label for="headshot" class="mb-3 col">Your Headshot</label>
+                                <div type="file" name="headshot" class="input-group mb-3 col">
+                                    {{ form.headshot(placeholder="Snapshot", class="form-control") }}
                                 </div>
-                            </div>
-                            <button type="submit" name="register" class="btn btn-primary shadow-2 mb-4">Register</button>
 
+                                <!---->
+                                <br><br><br><br>
+                                
+                                <div class="input-group mb-3">
+                                    {{ form.first_name(placeholder="First Name", class="form-control") }}
+                                </div>
+                                
+                                <div class="input-group mb-3">
+                                    {{ form.last_name(placeholder="Last Name", class="form-control") }}
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    {{ form.phone(placeholder="Phone", class="form-control") }}
+                                </div>
+
+                                <div class="input-group mb-3 datepicker-holder">
+                                    {{ form.dob(placeholder="Date of birth", class="form-control",
+                                        type="date",
+                                        id="datepicker_dob",
+                                        max="2010-01-01",
+                                        min="1900-01-01"
+                                        ) }}
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    {{ form.username(placeholder="Username", class="form-control") }}
+                                </div>
+                                
+                                <div class="input-group mb-3">
+                                    {{ form.email(placeholder="Email", class="input form-control", type="email") }}
+                                </div>
+
+                                <div class="input-group mb-4">
+                                    {{ form.password(placeholder="Password", class="form-control", type="password") }}
+                                </div>
+                                
+                                <div class="form-group text-left">
+                                    <div class="checkbox checkbox-fill d-inline">
+                                        <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="">
+                                        <label for="checkbox-fill-a1" class="cr"> Agree with <a href="#">terms</a></label>
+                                    </div>
+                                </div>
+                                <button type="submit" name="register" class="btn btn-primary shadow-2 mb-4">Register</button>
+
+                            </div>
                         </form>
                         
                         <p class="mb-0 text-muted">Already have an account? <a href="{{ url_for('auth_blueprint.login') }}">Login</a></p>

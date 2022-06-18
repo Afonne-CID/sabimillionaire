@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from app.home import blueprint
 from app.home.forms import CreatePayment
 from flask_login import current_user, logout_user
+from app.auth.util import hash_pass
 from flask import redirect, render_template, request, url_for, jsonify, abort, flash
 from flask_login import login_required
 from jinja2 import TemplateNotFound
@@ -406,6 +407,55 @@ def play_and_win():
             '''
             raise Exception(e) 
 
+@blueprint.route('page-profile', methods=['POST', 'GET'])
+def page_profile():
+    ''''''
+    id = current_user.get_id()
+    user = User.query.get(id)
+
+    if request.method == 'GET':
+        return render_template('home/page-profile.html',
+            filename=HeadShot.query.filter_by(user_id=id).first().name,
+            full_name='{} {}'.format(user.first_name, user.last_name),
+            username=user.username,
+            email=user.email,
+            phone=user.phone,
+            countries=Countries.query.all()
+        )
+    
+    elif request.method == 'POST':
+
+        try:
+            if request.form['full_name']:
+                name = request.form['full_name'].split(' ')
+                if name and len(name) > 1:
+                    user.first_name = name[0]
+                    user.last_name = name[1]
+            if request.form['password']:
+                password = hash_pass(request.form['password'])
+                user.password = password
+            if request.form['email']:
+                user.email = request.form['email']
+            if request.form['phone']:
+                user.phone = request.form['phone']
+            if request.form['country']:
+                user.country = request.form['country']
+            
+            db.session.commit()
+        
+        except Exception as e:
+            db.session.rollback()
+            raise e
+              
+        flash('Details successfully updated')
+        return render_template('home/page-profile.html',
+            filename=HeadShot.query.filter_by(user_id=id).first().name,
+            full_name='{} {}'.format(user.first_name, user.last_name),
+            username=user.username,
+            email=user.email,
+            phone=user.phone,
+            countries=Countries.query.all()
+        )
 
 
 @blueprint.route('/<template>')
@@ -471,6 +521,9 @@ def shuffle_list(list):
      return list
 
 def grade_finder(passed, total):
+    passed += 1
+    total += 1
+    
     res = int(passed/total * 100)
     if res > 86:
         return 'A+'
