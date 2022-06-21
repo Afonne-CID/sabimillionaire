@@ -177,8 +177,10 @@ class Deposit(db.Model):
     status = db.Column(db.String(10), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     reference = db.Column(db.String(200), nullable=False)
-    date = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, nullable=False)
+    paid_at = db.Column(db.DateTime, nullable=False)
     payment_option = db.Column(db.String(50), nullable=False)
+    currency = db.Column(db.String(3), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
 
@@ -189,5 +191,5 @@ class Withdraw(db.Model):
     status = db.Column(db.String(10), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     reference = db.Column(db.String(200), nullable=False)
-    date = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

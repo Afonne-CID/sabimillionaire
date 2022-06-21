@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Make payment {% endblock %} 
+{% block title %} Fund Account {% endblock %} 
 
 <!-- Specific CSS goes HERE -->
 {% block stylesheets %}
@@ -10,127 +10,126 @@
 <script src="{{url_for('static', filename='assets/js/custom.js')}}"></script>
 
 {% block content %}
-<div>
-    <div id="credo-payments">
-        <form role="form" id="payment-form" method="post" action="">
-            {% if msg or error %}
-                <div class="form-row float-right">
-                    <p class="btn btn-danger">
-                        {% if msg %}
-                            {{ msg }}
-                        {% endif %}
-                        {% if error %}
-                            {{ error }}
-                        {% endif %}
-                    </p>
-                </div>
-                <br><br><br>
 
-            {% endif %}
-            <div class="form-row float-right">
-                <br><br><br><br>
-                <div class="very-unique">
-                    <div class="form-row float-right">
-                        <div class="col-auto">
-                            <label class="sr-only" for="inlineFormInput">Platform</label>
-                            <select name="Platform" class="btn btn-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                {% for platform in platforms %}
-                                    <option value="{{ platform }}">{{ platform }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-auto">
-                            <label class="sr-only" for="inlineFormInputGroup">Username</label>
-                            <div class="input-group mb-2">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text">@</div>
-                            </div>
-                                {{ form.receivers(placeholder="example, me", type="text", class="form-control") }}
-                            </div>
-                        </div>
-                    </div>
+    <div class="page-breadcrumb" style="margin:10px!important;">
+        <div class="row align-items-center">
+            <div class="col-md-6 col-8 align-self-center">
+                <div class="d-flex align-items-center">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Fund Account</li>
+                        </ol>
+                    </nav>
                 </div>
-                <div class="col-auto">
-                    <span id="add" class="btn btn-primary mb-2"><i class="fa fa-plus" aria-hidden="true"></i><span>
-                </div>
-                <div class="col-auto">
-                    <label class="sr-only" for="inlineFormInput">Amount</label>
-                    {{ form.amount(placeholder=user.currency, type="text", class="form-control mb-2", id="inlineFormInput") }}
-                </div>
-                <div class="col-auto">
-                    <label for="pament_option" class="sr-only">Payment Option</label>
-                    <select name="payment_option" class="btn btn-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {% for option in payment_option %}
-                            <option class="dropdown-item" value="{{ option }}">{{ option }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <button class="btn btn-primary" value="start" name="start">Start</button>
-                </div>
-            </div>
-        </form>
-        <br><br><br><br>
-        <!-- <button type="submit" name="pay" class="btn btn-primary col-md-6 float-right">Pay Now</button> -->
-        <br><br><br><br>
-    </div>
-    {% if success %}
-        <iframe
-            allowtransparency="true";
-            width="100%"
-            height="500px"
-            class="float-center bQdRvg"
-            style="background: #fff !important;"
-            src="{{ payment_link }}"
-            frameborder="0"
-            framebackground="none"
-            id="credo_form">
-        </iframe>
-        <form role="form" action="">
-            <button type="submit" name="pay" value="pay" class="btn btn-primary col-md-6 center" style="margin-left:300px">Pay Now</button>
-        </form>
-    {% elif payment_success %}
-        <div class="container">
-            <div class="row">
-            <div class="col-md-6 mx-auto mt-5">
-                <div class="payment">
-                    <div class="payment_header">
-                        <div class="check"><i class="fa fa-check" aria-hidden="true"></i></div>
-                    </div>
-                    <div class="content">
-                        <h1>Payment Success !</h1>
-                        <p>Your payment was successful
-                        </p>
-                        <a href="/make-payment">Make Another Payment</a>
-                    </div>
-                    
-                </div>
-            </div>
             </div>
         </div>
-    {% elif not payment_success %}
-        <div class="container">
-            <div class="row">
-            <div class="col-md-6 mx-auto mt-5">
-                <div class="payment">
-                    <div class="payment_header">
-                        <div class="check"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></div>
-                    </div>
-                    <div class="content">
-                        <h1>Opps ! Something Went Wrong</h1>
-                        <p>Your payment was not successful
-                        </p>
-                        <a href="/make-payment">Try Again</a>
-                    </div>
-                    
-                </div>
-            </div>
+    </div>
+
+<div class="col-md-6 mx-auto mt-5">
+    {% if payment_status %}
+        <div class="row alert alert-success" role="alert">
+            <div class="check"><i class="fa fa-check" aria-hidden="true"></i>Payment Successful</div>
+        </div>
+    {% else %}
+        <div class="row alert alert-primary" role="alert">
+            <div class=""></div>
+            <div class="alert alert-primary" role="alert">
+                Input amount you wish to fund your account with and proceed to make payment
             </div>
         </div>
     {% endif %}
 </div>
+
+<div class="col-md-6 mx-auto mt-5" style="margin-bottom: 10px;">
+
+    <form id="paymentForm">
+
+        <div class="form-group">
+          <label for="amount" class="col-sm-4 col-form-label">Amount</label>
+          <input type="tel" name="amount" id="amount" {% if not amount %} required {% else %} {{ amount }} style="background-color: #f6f6f6;" readonly {% endif %}/>
+        </div>
+      
+        <div class="form-group">
+          <label for="email" class="col-sm-4 col-form-label">Email Address</label>
+          <input type="email" id="email-address" name="email" value="{{ current_user.email }}" style="background-color: #f6f6f6;" readonly/>
+        </div>
+      
+        <div class="form-group">
+          <label for="first-name" class="col-sm-4 col-form-label">First Name</label>
+          <input type="text" name="first-name" id="first-name" value="{{ current_user.first_name }}" style="background-color: #f6f6f6;" readonly/>
+        </div>
+      
+        <div class="form-group">
+          <label for="last-name" class="col-sm-4 col-form-label">Last Name</label>
+          <input type="text" name="last-name" id="last-name" value="{{ current_user.last_name }}" style="background-color: #f6f6f6;" readonly/>
+        </div>
+      
+        <div class="form-submit row">
+          <button type="button" class="btn btn-primary btn-lg" name="pay" onclick="payWithPaystack()"> Pay </button>
+        </div>
+
+      </form>
+      
+</div>
+<div class="col-xl-12" style="margin:30px;">
+    <div class="card Recent-Users">
+        <div class="card-header">
+            <h5>Recent Transactions</h5>
+        </div>
+        <div class="card-block px-0 py-3">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <tbody>
+                        <tr>
+                            <th>S/N</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Transaction ID</th>
+                        </tr>
+                        {% for payment in payments %}
+                            <tr class="unread">
+                                <td>
+                                    {{ loop.index }}
+                                </td>
+                                <td>
+                                    <h6 class="mb-1">{{ payment.created_at }}</h6>
+                                </td>
+                                <td>
+                                    {{ payment.amount }}
+                                    <!-- <img class="rounded-circle" style="width:40px;" src="/static/assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
+                                </td>
+                                {% if payment.status == "success" %}
+                                    <td>
+                                        <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>{{ payment.payment_status }}</h6>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                        <h6 class="text-muted"><i class="fas fa-circle text-c-red f-10 m-r-15"></i>{{ payment.payment_status }}</h6>
+                                    </td>
+                                {% endif %}
+                                <td>
+                                    <h6 class="text-muted f-w-300">{{ payment.reference }}</h6>
+                                </td>
+                                <td>
+                                        <h6 class="text-muted f-w-300">{{ payment.payment_option }}</h6>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    Page {{ page }} of {{ total_pages // count}}
+                    {% if total_pages > end %} <button class="btn btn-primary">Next</button> {% endif %}
+                </div>
+            </div>
+    </div>
+</div>
+
+
 {% endblock content %}
 
 {% block javascripts %}
+    <script src="https://js.paystack.co/v1/inline.js"></script> 
     <script src="/static/assets/js/custom.js"></script>
 {% endblock javascripts %}

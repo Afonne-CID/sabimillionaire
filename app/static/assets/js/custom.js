@@ -1,50 +1,33 @@
-$(document).ready(function() {
-    $('#add').on('click', function() {
-        var $very_unique = $('.very-unique');
-        $very_unique.clone().appendTo('#payment-form');
-    })
+var paymentForm = document.getElementById('paymentForm');
+
+paymentForm.addEventListener('submit', payWithPaystack, false);
+
+function payWithPaystack() {
+
+  var handler = PaystackPop.setup({
+    key: 'pk_test_7ca2670623a4247a764e0c5413be0749edf05fd1',
+    email: document.getElementById('email-address').value,
+    amount: document.getElementById('amount').value * 100,
+    currency: 'NGN',
+
+    callback: function(response) {
+      $.ajax({
+        url: '/fund-account?reference='+ response.reference,
+        method: 'get',
+        success: function () {
+          window.location.pathname = '/index';
+        }
+      });
+    },
+
+    onClose: function() {
+
+      alert('Transaction was not completed, window closed.');
+
+    },
+
   });
 
-// $(document).ready(function() {
-//       $('#add').on('click', function() {
-//         var field =`
-//         <br><br><br>
-//         <div class="form-row float-right">
-//         <div class="col-auto">
-//             <label class="sr-only" for="inlineFormInput">Platform</label>
-//             <select name="Platform" class="btn btn-secondary" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-//                 {% for platform in platforms %}
-//                     <option value="{{ platform }}">{{ platform }}</option>
-//                 {% endfor %}
-//             </select>
-//         </div>
-//         <div class="col-auto">
-//             <label class="sr-only" for="inlineFormInputGroup">Username</label>
-//             <div class="input-group mb-2">
-//             <div class="input-group-prepend">
-//                 <div class="input-group-text">@</div>
-//             </div>
-//                 {{ form.receivers(placeholder="example, me", type="text", class="form-control", id="inlineFormInputGroup") }}
-//             </div>
-//         </div>
-//           <div class="col-auto">
-//             <span class="btn btn-white col-md-6"></span>
-//         </div>
-//         <span class="btn btn-white col-md-6"></span>`;
-//         $('#payment-form').append(field);
-//       }); 
-// });
+  handler.openIframe();
 
-// $(document).ready(function() {
-//     $("iframe").css('background', 'white');
-// });
-
-// // $(document).ready(function() {
-// //     $('#add').on('click', function() {
-// //         function removeDummy() {
-// //             var elem = document.getElementById('dummy');
-// //             elem.parentNode.removeChild(elem);
-// //             return false;
-// //         }
-// //     })
-// // });
+}

@@ -30,20 +30,29 @@
                     <div class="col-md-7 col-12 align-self-center d-none d-md-block">
                         <div class="d-flex mt-2 justify-content-end">
                             <div class="d-flex ml-2">
+                                <div>
+                                    <i class="ti-wallet text-primary" style="font-size:20px;align-items: center; margin:10px;"></i>
+                                </div>
                                 <div class="chart-text mr-2">
-                                    <i class="ti-wallet text-primary" style="font-size:20px;align-items: center;"></i>
-                                    <h4>Wallet: <span class="mt-0 text-primary"> ₦{{ wallet }}</span></h4>
+                                    <h4>  Wallet: <span class="mt-0 text-primary"> ₦{{ wallet }}</span></h4>
                                 </div>
                                 <div class="spark-chart">
                                     <div id="lastmonthchart"><canvas style="display: inline-block; width: 60px; height: 35px; vertical-align: top;" width="60" height="35"></canvas></div>
                                 </div>
                             </div>
+
+
+                            <div class="col-md-5 col-12 align-self-center">
+                                <a href="{{ url_for('transaction_blueprint.account_fund') }}">
+                                    <button type="button" class="btn btn-primary" title="btn btn-primary">Fund Wallet</button>
+                                </a>
+                            </div>
+                            
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
 
         <!-- Testing starts here -->
         <div class="row" style="margin:10px!important;">
@@ -140,6 +149,65 @@
         {% endwith %}
     </div>
     {% endif %}
+
+    <div class="col-xl-12" style="margin:30px;">
+        <div class="card Recent-Users">
+            <div class="card-header">
+                <h5>Recent Transactions</h5>
+            </div>
+            <div class="card-block px-0 py-3">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <tbody>
+                            <tr>
+                                <th>S/N</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Transaction ID</th>
+                            </tr>
+                            {% for payment in payments %}
+                                <tr class="unread">
+                                    <td>
+                                        {{ loop.index }}
+                                    </td>
+                                    <td>
+                                        <h6 class="mb-1">{{ payment.created_at }}</h6>
+                                    </td>
+                                    <td>
+                                        {{ payment.amount }}
+                                        <!-- <img class="rounded-circle" style="width:40px;" src="/static/assets/images/user/avatar-1.jpg" alt="activity-user"></td> -->
+                                    </td>
+                                    {% if payment.status == "success" %}
+                                        <td>
+                                            <h6 class="text-muted"><i class="fas fa-circle text-c-green f-10 m-r-15"></i>{{ payment.payment_status }}</h6>
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            <h6 class="text-muted"><i class="fas fa-circle text-c-red f-10 m-r-15"></i>{{ payment.payment_status }}</h6>
+                                        </td>
+                                    {% endif %}
+                                    <td>
+                                        <h6 class="text-muted f-w-300">{{ payment.reference }}</h6>
+                                    </td>
+                                    <td>
+                                            <h6 class="text-muted f-w-300">{{ payment.payment_option }}</h6>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        Page {{ page }} of {{ total_pages // count }}
+                    {% if total_pages > end %}
+                    <button class="btn btn-primary">
+                        <a href="{{ url_for('home_blueprint.index?page={{ page+=1 }}') }}">Next</a>
+                    </button>
+                    {% endif %}
+                    
+                    </div>
+                </div>
+        </div>
+    </div>
 
 {% endblock content %}
 

@@ -6,10 +6,9 @@ from os import environ as env
 from dotenv import load_dotenv
 from app.home import blueprint
 from app.home.forms import CreatePayment
-from flask_login import current_user, logout_user
+from flask_login import current_user, logout_user, login_required
 from app.auth.util import hash_pass
 from flask import redirect, render_template, request, url_for, jsonify, abort, flash
-from flask_login import login_required
 from jinja2 import TemplateNotFound
 from ..models import *
 from urllib.parse import urlparse, parse_qs
@@ -19,7 +18,7 @@ import time
 
 
 load_dotenv()
-
+COUNT = 5
 
 @blueprint.route('/')
 def route_default():
@@ -36,6 +35,14 @@ def index():
     grade = grade_finder(account.total_correct, account.total_attempted)
     headshot = HeadShot.query.filter_by(user_id=id).first()
 
+    deposits = Deposit.query.filter_by(user_id=id).all()
+
+    paginate = paginate_rtr()
+    start = paginate['start']
+    end = paginate['end']
+    page = paginate['page']
+    count = paginate['count']
+
     return render_template(
             'home/index.html',
             segment='index',
@@ -46,7 +53,12 @@ def index():
             slots=account.slots,
             coin_balance=account.coin_balance,
             grade=grade,
-            filename=headshot.name
+            filename=headshot.name,
+            payments=deposits[start:end],
+            total_pages=len(deposits),
+            page=page,
+            end=end,
+            count=count
         )
 
 
@@ -574,3 +586,16 @@ def grade_finder(passed, total):
         return 'D'
     else:
         return 'E'
+    
+
+def paginate_rtr():
+    page = request.args.get('page', 1, type=int)
+    start = (page - 1) * COUNT
+    end = start + COUNT
+
+    return ({
+        'page': page,
+        'end': end,
+        'start': start, 
+        'count': COUNT
+    })

@@ -5,7 +5,10 @@ from flask_admin.contrib.sqla import ModelView
 from flask_admin import Admin
 
 app = create_app()
-admin = Admin(app)
+admin = Admin(app,
+    'Dashboard',
+    template_mode='bootstrap4'
+)
 
 # # Add model views
 admin.add_view(UserView(User, db.session, menu_icon_type='fa', menu_icon_value='fa-users', name="Users"))
@@ -15,6 +18,7 @@ admin.add_view(ModelView(University, db.session, menu_icon_type='fa', menu_icon_
 admin.add_view(ModelView(Account, db.session, menu_icon_type='fa', menu_icon_value='fa-users', name="Accounts"))
 admin.add_view(ModelView(Level, db.session, menu_icon_type='fa', menu_icon_value='fa-users', name="Levels"))
 admin.add_view(AdminUserView(AdminUser, db.session, menu_icon_type='fa', menu_icon_value='fa-users', name="AdminUsers"))
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
