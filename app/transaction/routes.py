@@ -50,11 +50,15 @@ def account_fund():
     end = paginate['end']
     page = paginate['page']
     count = paginate['count']
+    d_len = len(deposits)
+    total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
+
 
     return render_template('transaction/make-payment.html',
+                            segment='account-fund',
                             filename=headshot.name,
                             payments=deposits[start:end],
-                            total_pages=len(deposits),
+                            total_pages=total_pages,
                             page=page,
                             end=end,
                             count=count
@@ -75,11 +79,14 @@ def account_withdraw():
     end = paginate['end']
     page = paginate['page']
     count = paginate['count']
+    d_len = len(withdrawals)
+    total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
 
     return render_template('transaction/withdraw.html',
+                            segment='account-withdraw',
                             filename=headshot.name,
                             withdrawals=withdrawals[start:end],
-                            total_pages=len(withdrawals),
+                            total_pages=total_pages,
                             page=page,
                             end=end,
                             count=count

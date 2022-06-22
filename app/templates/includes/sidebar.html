@@ -2,51 +2,31 @@
     enable JavaScript and then reload this page in order to continue. </h3> 
     <meta HTTP-EQUIV="refresh" content=0;url="not-allowed.html"></noscript>
 
-<aside class="" data-sidebarbg="skin6">
+<aside class="left-sidebar" data-sidebarbg="skin6">
     <div class="scroll-sidebar">
-        <nav class="pcoded-navbar">
+        <!-- pcoded-sidebar -->
+        <nav class="sidebar-nav">
             <div class="navbar-wrapper">
-                <div class="navbar-brand header-logo">
-                    <a 
-                    href="{{ url_for('home_blueprint.index') }}" class="b-brand">
-                        <div class="b-bg">
-                            <i class="feather icon-trending-up"></i>
-                        </div>
-                        <span class="b-title">
-                            {% if current_user.is_authenticated %}
-                                {{ current_user.username }}
-                            {% else %}
-                                Sabimillionaire
-                            {% endif %}
-                        </span>
-                    </a>
-                    <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
-                </div>
                 <div class="navbar-content scroll-div">
-                    <ul class="nav pcoded-inner-navbar">
-                        <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" 
-                            class="nav-item sidebar-item {% if 'index' in segment %} active {% endif %}">
-                            <a href="{{ url_for('home_blueprint.index') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
+                    <ul class="nav pcoded-inner-navbar sidebarnav">
+                        <li class="nav-item sidebar-item {% if 'index' in segment %} active {% endif %}">
+                            <a href="{{ url_for('home_blueprint.index') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                         </li>
-                        <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" 
-                            class="nav-item sidebar-item {% if 'account-fund' in segment %} active {% endif %}">
-                            <a href="{{ url_for('transaction_blueprint.account_fund') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Fund Account</span></a>
+                        <li class="nav-item sidebar-item {% if 'account-fund' in segment %} active {% endif %}">
+                            <a href="{{ url_for('transaction_blueprint.account_fund') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Fund Account</span></a>
                         </li>
-                        <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" 
-                            class="nav-item sidebar-item {% if 'account-withdraw' in segment %} active {% endif %}">
-                            <a href="{{ url_for('transaction_blueprint.account_withdraw') }}" class="nav-link "><span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Withdrawal</span></a>
+                        <li class="nav-item sidebar-item {% if 'account-withdraw' in segment %} active {% endif %}">
+                            <a href="{{ url_for('transaction_blueprint.account_withdraw') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Withdrawal</span></a>
                         </li>
-                        <li data-username="form elements advance componant validation masking wizard picker select" 
-                            class="nav-item sidebar-item {% if 'questions' in segment %} active {% endif %}">
-                            <a href="{{ url_for('home_blueprint.play_game') }}" class="nav-link "><span class="pcoded-micon"><i class="fa fa-gamepad" aria-hidden="true"></i></span><span class="pcoded-mtext">Play Game</span></a>
+                        <li class="nav-item sidebar-item {% if 'questions' in segment %} active {% endif %}">
+                            <a href="{{ url_for('home_blueprint.play_game') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="fa fa-gamepad" aria-hidden="true"></i></span><span class="pcoded-mtext">Play Game</span></a>
                         </li>
-                        <li data-username="Table bootstrap datatable footable" 
-                            class="nav-item sidebar-item {% if 'page-profile' in segment %} active {% endif %}">
-                            <a href="{{ url_for('home_blueprint.page_profile') }}" class="nav-link "><span class="pcoded-micon"><i class="fa fa-cogs" aria-hidden="true"></i></span><span class="pcoded-mtext">Profile Settings</span></a>
+                        <li class="nav-item sidebar-item {% if 'page-profile' in segment %} active {% endif %}">
+                            <a href="{{ url_for('home_blueprint.page_profile') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="fa fa-cogs" aria-hidden="true"></i></span><span class="pcoded-mtext">Profile Settings</span></a>
                         </li>
-                        <li data-username="Disabled Menu" class="nav-item sidebar-item">
-                            <a href="{{ url_for('auth_blueprint.logout') }}" class="nav-link">
-                                <span class="pcoded-micon"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Logout</span>
+                        <li>
+                            <a href="{{ url_for('auth_blueprint.logout') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link">
+                                <span class="pcoded-micon hide-menu"><i class="feather icon-power"></i></span><span class="pcoded-mtext">Logout</span>
                             </a>
                         </li>                                     
                     </ul>
@@ -55,3 +35,38 @@
         </nav>
     </div>
 </aside>
+
+
+<!-- <aside class="left-sidebar" data-sidebarbg="skin6">
+    <div class="scroll-sidebar">
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav">
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        href="/" aria-expanded="false"><i class="mdi me-2 mdi-gauge"></i><span
+                            class="hide-menu">Dashboard</span></a></li>
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        href="/page-profile.html" aria-expanded="false">
+                        <i class="mdi me-2 mdi-account-check"></i><span class="hide-menu">Profile</span></a>
+                </li>
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        href="/table-basic.html" aria-expanded="false"><i class="mdi me-2 mdi-table"></i><span
+                            class="hide-menu">Table</span></a></li>
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        href="/icon-material.html" aria-expanded="false"><i
+                            class="mdi me-2 mdi-emoticon"></i><span class="hide-menu">Icon</span></a></li>
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        href="/map-google.html" aria-expanded="false"><i class="mdi me-2 mdi-earth"></i><span
+                            class="hide-menu">Google Map</span></a></li>
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        href="/page-blank.html" aria-expanded="false"><i
+                            class="mdi me-2 mdi-book-open-variant"></i><span class="hide-menu">Blank</span></a>
+                </li>
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link"
+                        href="/page-404.html" aria-expanded="false"><i class="mdi me-2 mdi-help-circle"></i><span
+                            class="hide-menu">Error 404</span></a>
+                </li>
+            </ul>
+
+        </nav>
+    </div>
+</aside> -->

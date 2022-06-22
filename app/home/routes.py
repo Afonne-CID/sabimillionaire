@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 import uuid
+import math
 import requests
 from urllib.parse import urlparse, parse_qs
 from os import environ as env
@@ -42,6 +43,9 @@ def index():
     end = paginate['end']
     page = paginate['page']
     count = paginate['count']
+    d_len = len(deposits)
+    total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
+
 
     return render_template(
             'home/index.html',
@@ -55,7 +59,7 @@ def index():
             grade=grade,
             filename=headshot.name,
             payments=deposits[start:end],
-            total_pages=len(deposits),
+            total_pages=total_pages,
             page=page,
             end=end,
             count=count
