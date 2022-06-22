@@ -13,10 +13,10 @@
                             <a href="{{ url_for('home_blueprint.index') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Dashboard</span></a>
                         </li>
                         <li class="nav-item sidebar-item {% if 'account-fund' in segment %} active {% endif %}">
-                            <a href="{{ url_for('transaction_blueprint.account_fund') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Fund Account</span></a>
+                            <a href="{{ url_for('transaction_blueprint.account_fund') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="fa fa-credit-card" aria-hidden="true"></i></span><span class="pcoded-mtext">Fund Account</span></a>
                         </li>
                         <li class="nav-item sidebar-item {% if 'account-withdraw' in segment %} active {% endif %}">
-                            <a href="{{ url_for('transaction_blueprint.account_withdraw') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Withdrawal</span></a>
+                            <a href="{{ url_for('transaction_blueprint.account_withdraw') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="fa fa-university" aria-hidden="true"></i></span><span class="pcoded-mtext">Withdrawal</span></a>
                         </li>
                         <li class="nav-item sidebar-item {% if 'questions' in segment %} active {% endif %}">
                             <a href="{{ url_for('home_blueprint.play_game') }}" class="nav-link sidebar-link waves-effect waves-dark sidebar-link "><span class="pcoded-micon hide-menu"><i class="fa fa-gamepad" aria-hidden="true"></i></span><span class="pcoded-mtext">Play Game</span></a>
