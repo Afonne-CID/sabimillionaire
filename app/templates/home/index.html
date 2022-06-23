@@ -150,7 +150,34 @@
     </div>
     {% endif %}
 
-    <div class="col-xl-12" style="margin:30px;">
+    <center>
+        <div class="col-lg-12 row">
+            <div class="col-md-6 col-xl-3">
+                <div class="card daily-sales bg-primary">
+                    <div class="card-block">
+                        <h6 class="mb-4" style="color:white;">Game Slots Left: <b>{{ slots }}</b></h6>
+                        <div class="progress m-t-30" style="height: 7px;">
+                            <div class="progress-bar progress-c-theme" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xl-3">
+                <div class="card daily-sales bg-primary">
+                    <div class="card-block">
+                        <button class="btn btn-success" style="color:white;">Buy Slots</button>
+                        <div class="progress m-t-30" style="height: 7px;">
+                            <div class="progress-bar progress-c-theme" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </center>
+
+
+
+    <div class="col-xl-12">
         <div class="card Recent-Users">
             <div class="card-header">
                 <h5>Recent Transactions</h5>

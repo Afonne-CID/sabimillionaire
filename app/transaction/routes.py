@@ -40,6 +40,10 @@ def account_fund():
                         amount=amount,
                 )        
 
+        if status == 'success':
+            account = Account.query.filter_by(user_id=id).first()
+            account.wallet_balance += amount
+
         db.session.add(deposit)
         db.session.commit()
 
@@ -73,6 +77,9 @@ def account_withdraw():
     headshot = HeadShot.query.filter_by(user_id=id).first()
 
     withdrawals = Withdraw.query.filter_by(user_id=id).all()
+    min_withdraw = Admin.query.first().min_withdraw
+    wallet_balance = Account.query.filter_by(user_id=id).first().wallet_balance
+
 
     paginate = paginate_rtr()
     start = paginate['start']
@@ -89,5 +96,7 @@ def account_withdraw():
                             total_pages=total_pages,
                             page=page,
                             end=end,
-                            count=count
+                            count=count,
+                            min_withdraw=min_withdraw,
+                            wallet_balance=wallet_balance
             )

@@ -1,3 +1,4 @@
+from distutils.command.build_scripts import first_line_re
 from doctest import debug_script
 from email.policy import default
 from enum import unique
@@ -47,6 +48,11 @@ class AdminUser(db.Model, UserMixin):
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
 
+class Admin(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.LargeBinary)
+    min_withdraw = db.Column(db.Integer, default=1500)
 
 class User(db.Model, UserMixin):
     '''User table

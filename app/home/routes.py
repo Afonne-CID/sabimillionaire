@@ -62,7 +62,7 @@ def index():
             total_pages=total_pages,
             page=page,
             end=end,
-            count=count
+            count=count,
         )
 
 

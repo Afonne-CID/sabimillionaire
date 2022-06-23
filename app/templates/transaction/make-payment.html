@@ -11,20 +11,20 @@
 
 {% block content %}
 
-    <div class="page-breadcrumb" style="margin:10px!important;">
-        <div class="row align-items-center">
-            <div class="col-md-6 col-8 align-self-center">
-                <div class="d-flex align-items-center">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Fund Account</li>
-                        </ol>
-                    </nav>
-                </div>
+<div class="page-breadcrumb" style="margin:10px!important;">
+    <div class="row align-items-center">
+        <div class="col-md-6 col-8 align-self-center">
+            <div class="d-flex align-items-center">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Fund Account</li>
+                    </ol>
+                </nav>
             </div>
         </div>
     </div>
+</div>
 
 <div class="col-md-6 mx-auto mt-5">
     {% if payment_status %}
@@ -43,36 +43,39 @@
 
 <div class="col-md-6 mx-auto mt-5" style="margin-bottom: 10px;">
 
-    <form id="paymentForm">
+    <form id="paymentForm" class="text-primary">
 
         <div class="form-group">
-          <label for="amount" class="col-sm-4 col-form-label">Amount</label>
-          <input type="tel" name="amount" id="amount" {% if not amount %} required {% else %} {{ amount }} style="background-color: #f6f6f6;" readonly {% endif %}/>
+        <label for="amount" class="col-sm-4 col-form-label">Amount</label>
+        <input type="tel" name="amount" id="amount" {% if not amount %} required {% else %} {{ amount }} style="background-color: #f6f6f6;" readonly {% endif %}/>
         </div>
-      
+    
         <div class="form-group">
-          <label for="email" class="col-sm-4 col-form-label">Email Address</label>
-          <input type="email" id="email-address" name="email" value="{{ current_user.email }}" style="background-color: #f6f6f6;" readonly/>
+        <label for="email" class="col-sm-4 col-form-label">Email Address</label>
+        <input type="email" id="email-address" name="email" value="{{ current_user.email }}" style="background-color: #f6f6f6;" readonly/>
         </div>
-      
+    
         <div class="form-group">
-          <label for="first-name" class="col-sm-4 col-form-label">First Name</label>
-          <input type="text" name="first-name" id="first-name" value="{{ current_user.first_name }}" style="background-color: #f6f6f6;" readonly/>
+        <label for="first-name" class="col-sm-4 col-form-label">First Name</label>
+        <input type="text" name="first-name" id="first-name" value="{{ current_user.first_name }}" style="background-color: #f6f6f6;" readonly/>
         </div>
-      
+    
         <div class="form-group">
-          <label for="last-name" class="col-sm-4 col-form-label">Last Name</label>
-          <input type="text" name="last-name" id="last-name" value="{{ current_user.last_name }}" style="background-color: #f6f6f6;" readonly/>
+        <label for="last-name" class="col-sm-4 col-form-label">Last Name</label>
+        <input type="text" name="last-name" id="last-name" value="{{ current_user.last_name }}" style="background-color: #f6f6f6;" readonly/>
         </div>
-      
+    
         <div class="form-submit row">
-          <button type="button" class="btn btn-primary btn-lg" name="pay" onclick="payWithPaystack()"> Pay </button>
+        <button type="button" class="btn btn-primary btn-lg" name="pay" onclick="payWithPaystack()"> Pay </button>
         </div>
 
-      </form>
-      
+    </form>
+    
 </div>
-<div class="col-xl-12" style="margin:30px;">
+
+<br><br>
+
+<div class="col-xl-12">
     <div class="card Recent-Users">
         <div class="card-header">
             <h5>Recent Transactions</h5>
