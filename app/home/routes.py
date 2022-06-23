@@ -46,7 +46,6 @@ def index():
     d_len = len(deposits)
     total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
 
-
     return render_template(
             'home/index.html',
             segment='index',
@@ -62,6 +61,7 @@ def index():
             total_pages=total_pages,
             page=page,
             end=end,
+            coins=account.coin_balance,
             count=count,
         )
 
@@ -94,7 +94,19 @@ def play_game():
 def free_trivia():
 
     id = current_user.get_id()
+    account = Account.query.filter_by(user_id=id).first()
+    grade = grade_finder(account.total_correct, account.total_attempted)
     headshot = HeadShot.query.filter_by(user_id=id).first()
+
+    deposits = Deposit.query.filter_by(user_id=id).all()
+
+    paginate = paginate_rtr()
+    start = paginate['start']
+    end = paginate['end']
+    page = paginate['page']
+    count = paginate['count']
+    d_len = len(deposits)
+    total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
 
 
     if request.method == 'POST':
@@ -120,7 +132,24 @@ def free_trivia():
                     db.session.rollback()
                     raise e
 
-                return render_template('home/index.html')
+                return render_template(
+                    'home/index.html',
+                    segment='index',
+                    wallet=account.wallet_balance,
+                    total_correct=account.total_correct,
+                    total_failed=account.total_failed,
+                    total_attempted=account.total_attempted,
+                    slots=account.slots,
+                    coin_balance=account.coin_balance,
+                    grade=grade,
+                    filename=headshot.name,
+                    payments=deposits[start:end],
+                    total_pages=total_pages,
+                    page=page,
+                    end=end,
+                    coins=account.coin_balance,
+                    count=count
+            )
 
             if 'start' in request.form:
                 cur_level = 0
@@ -268,7 +297,16 @@ def play_and_win():
     account = Account.query.filter_by(user_id=id).first()
     attempts_left = account.slots
     headshot = HeadShot.query.filter_by(user_id=id).first()
+    grade = grade_finder(account.total_correct, account.total_attempted)
+    deposits = Deposit.query.filter_by(user_id=id).all()
 
+    paginate = paginate_rtr()
+    start = paginate['start']
+    end = paginate['end']
+    page = paginate['page']
+    count = paginate['count']
+    d_len = len(deposits)
+    total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
 
     if request.method == 'POST':
         try:
@@ -292,7 +330,24 @@ def play_and_win():
                     db.session.rollback()
                     raise e
 
-                return render_template('home/index.html', filename=headshot.name)
+                return render_template(
+                    'home/index.html',
+                    segment='index',
+                    wallet=account.wallet_balance,
+                    total_correct=account.total_correct,
+                    total_failed=account.total_failed,
+                    total_attempted=account.total_attempted,
+                    slots=account.slots,
+                    coin_balance=account.coin_balance,
+                    grade=grade,
+                    filename=headshot.name,
+                    payments=deposits[start:end],
+                    total_pages=total_pages,
+                    page=page,
+                    end=end,
+                    coins=account.coin_balance,
+                    count=count
+            )
 
             if 'start' in request.form:
 

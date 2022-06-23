@@ -89,6 +89,9 @@ def account_withdraw():
     d_len = len(withdrawals)
     total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
 
+    if 'withdraw' in request.form:
+        ''''''
+
     return render_template('transaction/withdraw.html',
                             segment='account-withdraw',
                             filename=headshot.name,
@@ -99,4 +102,62 @@ def account_withdraw():
                             count=count,
                             min_withdraw=min_withdraw,
                             wallet_balance=wallet_balance
+            )
+
+@blueprint.route('/buy-slots', methods=['POST'])
+def buy_slots():
+    ''''''
+    id = current_user.get_id()
+    headshot = HeadShot.query.filter_by(user_id=id).first()
+
+    withdrawals = Withdraw.query.filter_by(user_id=id).all()
+    min_withdraw = Admin.query.first().min_withdraw
+    account = Account.query.filter_by(user_id=id).first()
+    wallet_balance = account.wallet_balance
+
+    paginate = paginate_rtr()
+    start = paginate['start']
+    end = paginate['end']
+    page = paginate['page']
+    count = paginate['count']
+    d_len = len(withdrawals)
+    total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
+
+    deposits = Deposit.query.filter_by(user_id=id).all()
+    cost_per_slot = Admin.query.first().cost_per_slot
+
+
+    if 'buy-slots' in request.form:
+        ''''''
+
+        if wallet_balance < cost_per_slot:
+            flash('You need at least {} to get a game slot'.format(cost_per_slot))
+        else:
+            qty = int(request.form['qty'])
+
+            try:
+                account.wallet_balance -= (qty * 200)
+                account.slots += qty * 2
+                db.session.commit()
+
+            except:
+                db.session.rollback()
+
+            flash('Action was successful')
+
+    return render_template('home/index.html',
+                        segment='index',
+                        wallet=account.wallet_balance,
+                        total_correct=account.total_correct,
+                        total_failed=account.total_failed,
+                        total_attempted=account.total_attempted,
+                        slots=account.slots,
+                        coin_balance=account.coin_balance,
+                        filename=headshot.name,
+                        payments=deposits[start:end],
+                        total_pages=total_pages,
+                        page=page,
+                        end=end,
+                        coins=account.coin_balance,
+                        count=count,
             )

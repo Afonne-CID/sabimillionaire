@@ -53,6 +53,7 @@ class Admin(db.Model, UserMixin):
     username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.LargeBinary)
     min_withdraw = db.Column(db.Integer, default=1500)
+    cost_per_slot = db.Column(db.Integer, default=200)
 
 class User(db.Model, UserMixin):
     '''User table

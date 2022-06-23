@@ -10,6 +10,8 @@
     <link href="/static/assets/plugins/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.css" rel="stylesheet">
     <!--This page css - Morris CSS -->
     <link href="/static/assets/plugins/c3-master/c3.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 
 {% endblock stylesheets %}
 
@@ -39,6 +41,13 @@
                                 <div class="spark-chart">
                                     <div id="lastmonthchart"><canvas style="display: inline-block; width: 60px; height: 35px; vertical-align: top;" width="60" height="35"></canvas></div>
                                 </div>
+                            </div>
+
+                            <div>
+                                <i class="fa-solid fa-coins" style="font-size:20px;align-items: center; margin:10px;"></i>
+                            </div>
+                            <div class="chart-text mr-2">
+                                <h4>  Coins: <span class="mt-0 text-primary"> {{ coins }}</span></h4>
                             </div>
 
 
@@ -143,6 +152,16 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
+                    {% else %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin:60px!important;">
+                            <strong>
+                                You don't have enough money in your wallet!
+                            </strong>
+                            Fund your account to buy a game slot. Alternatively, you can play our free trivia quiz.
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
                     {% endif %}
                 {% endfor %}
             {% endif %}
@@ -155,7 +174,12 @@
             <div class="col-md-6 col-xl-3">
                 <div class="card daily-sales bg-primary">
                     <div class="card-block">
-                        <h6 class="mb-4" style="color:white;">Game Slots Left: <b>{{ slots }}</b></h6>
+                        <h6 class="mb-4" style="color:white;">Game Slots Left</h6>
+
+                        <div class="form-group mx-sm-3 mb-2">
+                            <input type="tel" class="form-control" value="{{ slots }}" style="text-align:center;font-size:28px;font-weight:bold;" readonly>
+                        </div>
+
                         <div class="progress m-t-30" style="height: 7px;">
                             <div class="progress-bar progress-c-theme" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
@@ -165,7 +189,17 @@
             <div class="col-md-6 col-xl-3">
                 <div class="card daily-sales bg-primary">
                     <div class="card-block">
-                        <button class="btn btn-success" style="color:white;">Buy Slots</button>
+
+
+                        <form method="post" action="/buy-slots">
+                            <div class="form-group mx-sm-3 mb-2">
+                                <input type="tel" name="qty" class="form-control" style="font-size:28px;" required>
+                            </div>
+
+                            <button type="submit" name="buy-slots" class="btn btn-success mb-2" style="color:white;">Buy Slots</button>
+
+                        </form>
+
                         <div class="progress m-t-30" style="height: 7px;">
                             <div class="progress-bar progress-c-theme" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
@@ -233,6 +267,37 @@
                         </div>
                     </div>
                 </div>
+        </div>
+
+
+
+
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Game Slots</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" action="/buy-slot">
+                            <div class="form-group">
+                                <label for="recipient-name" class="col-form-label">Quantity</label>
+                                <input type="tel" name="qty" class="form-control">
+                            </div>
+
+
+                            <div class="modal-footer">
+                                <button name="buy-slots" class="btn btn-primary">Buy Now</button>
+                                <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
