@@ -126,7 +126,7 @@
                             <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalCenterTitle">Congratulations!</h5>
                             <button type="submit" class="close" id="close" name="cashout" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
+                                <span type="submit" name="cashout" aria-hidden="true">×</span>
                             </button>
                             </div>
                             <div class="modal-body">
@@ -140,7 +140,15 @@
                                 <input type="hidden" value="{{ level }}" name="level">
                                 <input type="hidden" value="{{ reward }}" name="reward">
                                 <input type="hidden" value="0" name="cnt">
-                                <button onclick=progressBar() type="submit" class="btn btn-primary" name="next-level">Next Level</button>
+                                {% if free or (not winner) %}
+                                    {% if level != 5 %}
+                                        <button onclick=progressBar() type="submit" class="btn btn-primary" name="next-level">Next Level</button>
+                                    {% endif %}
+                                {% else %}
+                                    <div class="alert alert-warning">
+                                        You can't go the final round as there has been a winner today {{ winner }}.
+                                    </div>
+                                {% endif %}
                                 <button type="submit" class="btn btn-secondary" data-dismiss="modal" name="cashout" >Cashout {{ reward }}</button>
                             </div>
                         </form>

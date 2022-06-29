@@ -5,6 +5,7 @@ from flask_login import login_required, current_user
 from app.transaction import blueprint
 from app.home.routes import paginate_rtr
 from ..models import *
+from app.home.routes import get_headshot
 
 
 @blueprint.route('/fund-account', methods=['GET', 'POST'])
@@ -12,7 +13,7 @@ from ..models import *
 def account_fund():
     ''''''
     id = current_user.get_id()
-    headshot = HeadShot.query.filter_by(user_id=id).first()
+    headshot = get_headshot()
 
     ref = request.args.get('reference')
     status = 'failed'
@@ -29,6 +30,9 @@ def account_fund():
         response = req.json()
         status = response['data']['status']
         amount = response['data']['amount'] / 100
+
+        if amount <= 0:
+            flash('Invalid amount')
 
         deposit = Deposit(status=status,
                         reference=response['data']['reference'],
@@ -74,12 +78,10 @@ def account_fund():
 def account_withdraw():
     ''''''
     id = current_user.get_id()
-    headshot = HeadShot.query.filter_by(user_id=id).first()
-
+    headshot = get_headshot()
     withdrawals = Withdraw.query.filter_by(user_id=id).all()
     min_withdraw = Admin.query.first().min_withdraw
     wallet_balance = Account.query.filter_by(user_id=id).first().wallet_balance
-
 
     paginate = paginate_rtr()
     start = paginate['start']
@@ -89,8 +91,39 @@ def account_withdraw():
     d_len = len(withdrawals)
     total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
 
-    if 'withdraw' in request.form:
-        ''''''
+    if request.method == 'POST':
+
+        user = User.query.get(id)
+        details = request.form
+        print(details)
+
+        first_name = user.first_name
+        last_name = user.last_name
+        amount = float(details.get('amount'))
+        
+        if amount > wallet_balance:
+            flash('Insufficient balance')
+        if amount <= 0:
+            flash('Invalid amount')
+
+        if (first_name == details.get('first-name') and
+            last_name == details.get('last-name')):
+
+            bank_name = details.get('bank-name')
+            account_number = float(details.get('account-number'))
+            amount = float(details.get('amount'))
+
+            if bank_name and account_number:
+                withdraw = Withdraw(**request.form)
+
+                db.session.add(withdraw)
+                db.session.commit()
+
+                flash('Withdraw request has been submitted successfully')
+            else:
+                flash('All details are required')
+        else:
+            flash('Widthdrawal details and profile details must match.')
 
     return render_template('transaction/withdraw.html',
                             segment='account-withdraw',
@@ -108,8 +141,7 @@ def account_withdraw():
 def buy_slots():
     ''''''
     id = current_user.get_id()
-    headshot = HeadShot.query.filter_by(user_id=id).first()
-
+    headshot = get_headshot()
     withdrawals = Withdraw.query.filter_by(user_id=id).all()
     min_withdraw = Admin.query.first().min_withdraw
     account = Account.query.filter_by(user_id=id).first()
@@ -161,3 +193,10 @@ def buy_slots():
                         coins=account.coin_balance,
                         count=count,
             )
+
+
+def payment_reference():
+    ''''''
+    val = str(uuid.uuid4()).split('-')
+    
+    return val[-1] + val[1]

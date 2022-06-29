@@ -4,7 +4,7 @@ from flask_wtf.file import FileField
 from wtforms import StringField, PasswordField
 from wtforms.validators import Email, DataRequired
 
-# login and registration
+# registration, verification and login
 class LoginForm(FlaskForm):
     username = StringField('Username',
                          id='username_login',
@@ -13,11 +13,22 @@ class LoginForm(FlaskForm):
                              id='pwd_login',
                              validators=[DataRequired()])
 
+class VerifyAccount(FlaskForm):
+    otp = StringField('OTP',
+                    id='account-verify',
+                    validators=[DataRequired()])
+
+class ChangePassword(FlaskForm):
+    otp = StringField('OTP',
+                    id='otp',
+                    validators=[DataRequired()])
+    new_password = StringField('New Password',
+                    id='password',
+                    validators=[DataRequired()])
 
 class CreateAccountForm(FlaskForm):
     headshot = FileField('Your headshot',
-                         id='headshot',
-                         validators=[DataRequired()])
+                         id='headshot')
     username = StringField('Username',
                          id='username_create',
                          validators=[DataRequired()])

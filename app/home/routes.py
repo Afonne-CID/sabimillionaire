@@ -1,13 +1,11 @@
 # -*- encoding: utf-8 -*-
-import uuid
-import math
-import requests
+from app.mail.mailer import mailer
 from urllib.parse import urlparse, parse_qs
 from os import environ as env
 from dotenv import load_dotenv
 from app.home import blueprint
-from app.home.forms import CreatePayment
 from flask_login import current_user, logout_user, login_required
+from app.auth.routes import allow_access
 from app.auth.util import hash_pass
 from flask import redirect, render_template, request, url_for, jsonify, abort, flash
 from jinja2 import TemplateNotFound
@@ -15,27 +13,64 @@ from ..models import *
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 import random
-import time
 
 
 load_dotenv()
+
+def yes_grand_winner(user):
+    ''''''
+    won_time = datetime.today().date()
+    winner = GrandWinner.query.first()
+
+    if winner != None:
+        winner.grand_winner = user.username
+        winner.grand_winner_time = won_time
+
+    else:
+        winner = GrandWinner(grand_winner=user.username,
+                            grand_winner_time=won_time)
+        db.session.add(winner)
+    db.session.commit()
+
+    return
+
+def any_grand_winner():
+    ''''''
+    winner = GrandWinner.query.first()
+    if winner:
+        grand_winner = winner.grand_winner
+        won_time = winner.grand_winner_time
+        if (won_time == datetime.today()):
+            return grand_winner
+        else:
+            return False
+    return False
+
 COUNT = 5
+
+
+@login_required
+def get_headshot():
+    id = current_user.get_id()
+    headshot = HeadShot.query.filter_by(user_id=id).first()
+    
+    return headshot
 
 @blueprint.route('/')
 def route_default():
     logout_user()
     return render_template('home/home.html')
 
-
 @blueprint.route('/index')
 @login_required
 def index():
     
+    allow_access(current_user)
+
     id = current_user.get_id()
     account = Account.query.filter_by(user_id=id).first()
     grade = grade_finder(account.total_correct, account.total_attempted)
-    headshot = HeadShot.query.filter_by(user_id=id).first()
-
+    headshot = get_headshot()
     deposits = Deposit.query.filter_by(user_id=id).all()
 
     paginate = paginate_rtr()
@@ -70,8 +105,10 @@ def index():
 @login_required
 def play_game():
     
+    allow_access(current_user)
+
     id = current_user.get_id()
-    headshot = HeadShot.query.filter_by(user_id=id).first()
+    headshot = get_headshot()
 
     if request.method == 'GET':
         level = 0
@@ -81,22 +118,17 @@ def play_game():
                 level=level,
                 filename=headshot.name
         )
-    
-    # if request.method == 'POST':
-    #     if 'trivia-test' in request.form:
-    #         return redirect(url_for('home_blueprint.free_trivia', form=request.form))
-    #     if 'play-n-win' in request.form:
-    #         return redirect(url_for('home_blueprint.play_and_win', form=request.form))
-
 
 @blueprint.route('/free-trivia', methods=['POST', 'GET'])
 @login_required
 def free_trivia():
 
+    allow_access(current_user)
+
     id = current_user.get_id()
     account = Account.query.filter_by(user_id=id).first()
     grade = grade_finder(account.total_correct, account.total_attempted)
-    headshot = HeadShot.query.filter_by(user_id=id).first()
+    headshot = get_headshot()
 
     deposits = Deposit.query.filter_by(user_id=id).all()
 
@@ -107,7 +139,6 @@ def free_trivia():
     count = paginate['count']
     d_len = len(deposits)
     total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
-
 
     if request.method == 'POST':
         try:
@@ -122,7 +153,7 @@ def free_trivia():
                     return render_template('home/index.html')
 
             if 'cashout' in request.form:
-                reward = 10
+                reward = int(request.form['cashout']) * 10
                 account = Account.query.filter_by(user_id=id).first()
                 account.coin_balance += reward
 
@@ -173,7 +204,7 @@ def free_trivia():
                     db.session.rollback()
                     print(e)
                     abort(500)
-        
+
             if cur_level > 1:
                 base_table = db_table_next(base_table)
 
@@ -189,11 +220,8 @@ def free_trivia():
                 comp = questions_in_db
 
             if cnt + 1 <= comp:
-                
                 cnt += 1
-
                 tmp = random.randint(0, questions_in_db)
-
                 question = base_table.query.get(tmp)
                 while not question or tmp in q_list:
 
@@ -221,7 +249,7 @@ def free_trivia():
 
             else:
                 '''Display result'''
-                reward = Level.query.get(cur_level).amount
+                reward = cur_level * 10
 
                 attempts = Attempt.query.filter(Attempt.user_id==id).\
                     order_by(Attempt.created_at.desc()).limit(5).all()
@@ -276,8 +304,7 @@ def free_trivia():
                         level=cur_level,
                         won=True,
                         reward=reward,
-                        # question=question,
-                        # options=options,
+                        free=True,
                         cnt=cnt,
                         filename=headshot.name
                     )
@@ -287,18 +314,19 @@ def free_trivia():
             '''
             raise Exception(e)       
 
-
-
 @blueprint.route('/play-and-win', methods=['POST', 'GET'])
 @login_required
 def play_and_win():
 
+    allow_access(current_user)
+
     id = current_user.get_id()
+    user = User.query.get(id)
     account = Account.query.filter_by(user_id=id).first()
     attempts_left = account.slots
-    headshot = HeadShot.query.filter_by(user_id=id).first()
     grade = grade_finder(account.total_correct, account.total_attempted)
     deposits = Deposit.query.filter_by(user_id=id).all()
+    headshot = get_headshot()
 
     paginate = paginate_rtr()
     start = paginate['start']
@@ -307,6 +335,8 @@ def play_and_win():
     count = paginate['count']
     d_len = len(deposits)
     total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
+
+    winner = False
 
     if request.method == 'POST':
         try:
@@ -322,7 +352,7 @@ def play_and_win():
 
             if 'cashout' in request.form:
                 reward = float(request.form['reward'])
-                account.wallet += reward
+                account.wallet_balance += reward
 
                 try:
                     db.session.commit()
@@ -386,7 +416,7 @@ def play_and_win():
             '''Will increase the limite to 100 later'''
             q_list = [attempt.question_id for attempt in Attempt.query.\
                     filter(Attempt.user_id==id).\
-                    order_by(Attempt.created_at.desc()).limit(2).all()]
+                    order_by(Attempt.created_at.desc()).limit(0).all()]
 
             questions_in_db = len(base_table.query.all())
 
@@ -394,28 +424,27 @@ def play_and_win():
             if questions_in_db < 5:
                 comp = questions_in_db
 
+            if cur_level == 4:
+                winner = any_grand_winner()
+                print('got here', winner)
+
             if cnt + 1 <= comp:
-                
                 cnt += 1
-
                 tmp = random.randint(0, questions_in_db)
-
                 question = base_table.query.get(tmp)
-                while not question or tmp in q_list:
 
+                while not question or tmp in q_list:
                     tmp = random.randint(0, questions_in_db)
                     if tmp not in q_list:
                         question = base_table.query.get(tmp)
                 
                 if cnt == comp:
                     cur_level += 1
-
                 options = shuffle_list([question.correct_option,
                                             question.wrong_option1,
                                             question.wrong_option2,
                                             question.wrong_option3,
                                             question.wrong_option4])
-
                 return render_template(
                     'home/questions.html',
                     level=cur_level,
@@ -424,11 +453,11 @@ def play_and_win():
                     cnt=cnt,
                     filename=headshot.name
                 )
-
             else:
                 '''Display result'''
                 reward = Level.query.get(cur_level).amount
-
+                if cur_level == 5:
+                    yes_grand_winner(user)
                 attempts = Attempt.query.filter(Attempt.user_id==id).\
                     order_by(Attempt.created_at.desc()).limit(5).all()
 
@@ -443,7 +472,6 @@ def play_and_win():
 
                     if user_selection == question.correct_option:
                         passed += 1
-                    
                     options = shuffle_list([question.correct_option,
                                             question.wrong_option1,
                                             question.wrong_option2,
@@ -477,16 +505,15 @@ def play_and_win():
                         cnt=cnt,
                         filename=headshot.name
                     )
-
                 else:
                     return render_template(
                         'home/questions.html',
                         level=cur_level,
                         won=True,
                         reward=reward,
-                        # question=question,
-                        # options=options,
                         cnt=cnt,
+                        paid=True,
+                        winner=winner,
                         filename=headshot.name
                     )
 
@@ -498,9 +525,12 @@ def play_and_win():
 @blueprint.route('page-profile', methods=['POST', 'GET'])
 def page_profile():
     ''''''
+    
+    allow_access(current_user)
+
     id = current_user.get_id()
     user = User.query.get(id)
-    headshot = HeadShot.query.filter_by(user_id=id).first()
+    headshot = get_headshot()
 
     if request.method == 'GET':
         return render_template('home/page-profile.html',
@@ -514,38 +544,45 @@ def page_profile():
         )
     
     elif request.method == 'POST':
+        otp = request.form['otp']
+        if not otp:
+            flash('OTP is required.')
+        correct_otp = user.verify
 
-        try:
-            if request.form['full_name']:
-                name = request.form['full_name'].split(' ')
-                if name and len(name) > 1:
-                    user.first_name = name[0]
-                    user.last_name = name[1]
+        if otp == correct_otp:
+            try:
+                if request.form['full_name']:
+                    name = request.form['full_name'].split(' ')
+                    if name and len(name) > 1:
+                        user.first_name = name[0]
+                        user.last_name = name[1]
 
-                    try:
-                        if name[1:]:
-                            for i in name[1:]:
-                                user.last_name += ' ' + i
-                    except:
-                        pass
+                        try:
+                            if name[1:]:
+                                for i in name[1:]:
+                                    user.last_name += ' ' + i
+                        except:
+                            pass
 
-            if request.form['password']:
-                password = hash_pass(request.form['password'])
-                user.password = password
-            if request.form['email']:
-                user.email = request.form['email']
-            if request.form['phone']:
-                user.phone = request.form['phone']
-            if request.form['country']:
-                user.country = request.form['country']
-            
-            db.session.commit()
-        
-        except Exception as e:
-            db.session.rollback()
-            raise e
+                if request.form['password']:
+                    password = hash_pass(request.form['password'])
+                    user.password = password
+                if request.form['email']:
+                    flash('Email cannot be changed')
+                if request.form['phone']:
+                    user.phone = request.form['phone']
+                if request.form['country']:
+                    user.country = request.form['country']
+                
+                db.session.commit()
+                flash('Details successfully updated')
+
+            except Exception as e:
+                db.session.rollback()
+                raise e
+        else:
+            flash('Invalid OTP code')
               
-        flash('Details successfully updated')
         return render_template('home/page-profile.html',
             segment='page-profile',
             filename=headshot.name,
@@ -555,7 +592,6 @@ def page_profile():
             phone=user.phone,
             countries=Countries.query.all()
         )
-
 
 @blueprint.route('/<template>')
 def route_template(template):
@@ -576,7 +612,6 @@ def route_template(template):
     except:
         return render_template('home/page-500.html'), 500
 
-
 # Helper - Extract current page name from request
 def get_segment(request):
 
@@ -586,8 +621,6 @@ def get_segment(request):
 
         if segment == '':
             segment = 'index'
-
-        print(segment)
         return segment
 
     except:
@@ -599,6 +632,8 @@ def age_calculator(born):
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
 def db_table_selector(age):
+    if age <= 11:
+        return Primary
     if 12 <= age <= 14:
         return JuniorSecondary
     if 15 <= age <= 18:
@@ -607,6 +642,8 @@ def db_table_selector(age):
         return University
 
 def db_table_next(table_name):
+    if table_name == Primary:
+        return JuniorSecondary
     if table_name == JuniorSecondary:
         return SeniorSecondary
     elif table_name == SeniorSecondary:

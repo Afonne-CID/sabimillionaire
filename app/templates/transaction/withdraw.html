@@ -63,36 +63,51 @@
                             </div>
 
 
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                    <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin:60px!important;">
+                                        <strong>Error!</strong> {{ messages[0] }} 
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+
                             <center>
                                 <div class="col-md-12 mx-auto mt-6 bg-primary" style="margin: 10px;padding:20px;">
                                     <h3>Bank Details</h3>
                                     <br>
-                                    <form class="text-primary">
+                                    <form class="text-primary" method="post" action="/withdraw-fund">
                                 
                                         <div class="row">
 
                                             <div class="col">
-                                              <input type="text" name="first-name" class="form-control" placeholder="First name">
+                                              <input type="number" min="{{ min_withdraw}}" name="amount" class="form-control" placeholder="Amount" required>
                                             </div>
 
                                             <div class="col">
-                                              <input type="text" name="last-name" class="form-control" placeholder="Last name">
+                                              <input type="text" name="first-name" class="form-control" placeholder="First name" required>
+                                            </div>
+
+                                            <div class="col">
+                                              <input type="text" name="last-name" class="form-control" placeholder="Last name" required>
                                             </div>
                                         </div>
                                         <br>
                                         <div class="row">
                                             <div class="col">
-                                              <input type="text" name="bank-name" class="form-control" placeholder="Bank Name">
+                                              <input type="text" name="bank-name" class="form-control" placeholder="Bank Name" required>
                                             </div>
 
                                             <div class="col">
-                                              <input type="text" name="account-number" class="form-control" placeholder="Account Number">
+                                              <input type="number" name="account-number" class="form-control" placeholder="Account Number" required>
                                             </div>
                                         </div>
                                     
                                         <br>
                                         <div class="form-submit">
-                                            <button type="button" class="btn btn-success btn-lg" name="withdraw"> Withdraw Money </button>
+                                            <button type="submit" class="btn btn-success btn-lg" name="withdraw"> Withdraw Money </button>
                                         </div>
                                 
                                     </form>

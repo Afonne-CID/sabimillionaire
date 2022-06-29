@@ -1,26 +1,39 @@
+from cgitb import html
 import imghdr
 import os
-from flask import render_template, redirect, request, url_for, current_app, abort
+import uuid
+from flask import (
+    render_template,
+    redirect,
+    request,
+    url_for,
+    current_app, abort,
+    flash)
 from flask_login import (
     current_user,
+    login_required,
     login_user,
     logout_user
 )
 from requests import head
 from app import db, login_manager
+from app.mail.mailer import mailer
 from app.auth import blueprint
-from app.auth.forms import LoginForm, CreateAccountForm
+from app.auth.forms import (
+    LoginForm,
+    CreateAccountForm,
+    VerifyAccount,
+    ChangePassword
+)
 from ..models import User, Account, HeadShot
-from app.auth.util import verify_pass
+from app.auth.util import verify_pass, hash_pass
 from werkzeug.utils import secure_filename
-
-# UPLOAD_FOLDER = path + '/static/uploads'
-# ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif']) #, 'pdf', 'png', 'jpg', 'jpeg', 'gif'
 
 
 # Login & Registration
 @blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+
     login_form = LoginForm(request.form)
     if 'login' in request.form:
 
@@ -33,9 +46,14 @@ def login():
 
         # Check the password
         if user and verify_pass(password, user.password):
-
             login_user(user)
-            return redirect(url_for('home_blueprint.index'))
+            if user.status == 1 and user.active:
+                return redirect(url_for('home_blueprint.index'))
+            elif user.status == 9:
+                mailer([user.email], 'Verification Code', '', user)
+                return redirect(url_for('auth_blueprint.verify_account'))
+            else:
+                return render_template('accounts/account-blocked.html')
 
         # Something (user or pass) is not ok
         return render_template('accounts/login.html',
@@ -47,6 +65,86 @@ def login():
                                form=login_form)
     return redirect(url_for('home_blueprint.index'))
 
+@blueprint.route('/verify-otp', methods=['GET', 'POST'])
+@login_required
+def verify_account():
+
+    id = current_user.get_id()
+    user = User.query.get(id)
+    verify_form = VerifyAccount(request.form)
+
+    if request.method == 'POST':
+        ''''''
+        if 'verification' in request.form:
+            input_otp = request.form['otp']
+            correct_otp = user.verify
+
+            if input_otp == correct_otp:
+                flash('Verification successful')
+                user.status, user.active = 1, 1
+                db.session.commit()
+                return redirect(url_for('home_blueprint.index'))
+        
+            return render_template('accounts/verify-account.html',
+                            msg='Invalid OTP supplied',
+                            form=verify_form)
+
+        if 'resend-otp' in request.form:
+            ''''''
+            mailer([user.email], 'New OTP', '', user)
+            flash('Otp has been resent')
+
+    return render_template('accounts/verify-account.html', form=verify_form)
+
+@blueprint.route('/reset-password', methods=['GET', 'POST'])
+def reset_password():
+    ''''''
+    try:
+        change_password = ChangePassword(request.form)
+    except Exception as e:
+        print(e)
+        pass
+
+    if request.method == 'POST':
+        if 'verification' in request.form:
+            email = request.form['email']
+            if not email:
+                flash('Email is required')
+            else:
+                user = User.query.filter_by(email=email).first()
+                if not user:
+                    flash("No user with that email was found")
+                else:
+                    mailer([user.email], 'New OTP', 'reset-password', user)
+                    return render_template('accounts/reset-password.html',
+                    form=change_password, status=True,
+                    email=email)
+
+        if 'reset-password' in request.form:
+            input_otp = request.form['otp']
+            email = request.form['email']
+            new_password = hash_pass(request.form['new_password'])
+
+            user = User.query.filter_by(email=email).first()
+            if not user:
+                flash("No user with that email was found")
+            else:
+                correct_otp = user.verify
+                if input_otp == correct_otp:
+                    flash('Password change successful')
+                    user.password = new_password
+                    db.session.commit()
+                    login_user(user)
+                    return redirect(url_for('home_blueprint.index'))
+                else:
+                    flash('Invalid OTP supplied')
+                    return render_template('accounts/reset-password.html',
+                                            form=change_password, status=True, email=email)
+        
+        return render_template('accounts/reset-password.html', form=change_password)
+
+    else:
+        return render_template('accounts/reset-password.html')
 
 @blueprint.route('/register', methods=['GET', 'POST'])
 def register():
@@ -85,58 +183,55 @@ def register():
                                    form=create_account_form)
 
         filename = secure_filename(headshot.filename)
-        if not headshot or filename == '':
-            return render_template('accounts/register.html',
-                                   msg='Headshot is required',
-                                   success=False,
-                                   form=create_account_form)
-
-        # file_name = secure_filename(headshot.filename)
-        # mimetype = headshot.mimetype
-
-        # else we can create the user
         try:       
             user = User(**request.form)
+            user.verify = generate_code()
             db.session.add(user)
             db.session.flush()
 
             account = Account(user_id=user.id)
 
-            file_ext = os.path.splitext(filename)[1]
-            if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
-                    file_ext != validate_image(headshot.stream):
-                        abort(400)
+            if filename:
+                file_ext = os.path.splitext(filename)[1]
+                if file_ext not in current_app.config['UPLOAD_EXTENSIONS'] or \
+                        file_ext != validate_image(headshot.stream):
+                            abort(400)
 
-            filename = '{}.{}'.format(user.username, file_ext)#secure_filename(headshot.filename)
-            headshot.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+                filename = '{}.{}'.format(user.username, file_ext)
+                headshot.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
 
-            headshot = HeadShot(name='static/uploads/'+str(filename),
-                            user_id=user.id)
-
+                headshot = HeadShot(name='static/uploads/'+str(filename),
+                                user_id=user.id)
+                                
+                db.session.add(headshot)
+            else:
+                headshot = HeadShot(user_id=user.id)
+            
             db.session.add(headshot)
             db.session.add(account)
-            
             db.session.commit()
+
+            login_user(user)
+            mailer([user.email], 'Registration Was Successful', 'register', user)
 
         except Exception as e:
             db.session.rollback()
             raise e
 
-        return render_template('accounts/register.html',
-                               msg='User created please <a href="/login">login</a>',
-                               success=True,
-                               form=create_account_form)
+        # return render_template('accounts/register.html',
+        #             msg='User created please <a href="/login">login</a>',
+        #             success=True,
+        #             form=create_account_form)
+        return redirect(url_for('auth_blueprint.verify_account'))
 
     else:
         return render_template('accounts/register.html', form=create_account_form)
-
 
 @blueprint.route('/logout')
 def logout():
     logout_user()
     # return redirect(url_for('auth_blueprint.login'))
     return redirect(url_for('home_blueprint.route_default'))
-
 
 # Errors
 @login_manager.unauthorized_handler
@@ -165,3 +260,16 @@ def validate_image(stream):
     if not format:
         return None
     return '.' + (format if format != 'jpeg' else 'jpg')
+
+def generate_code():
+    ''''''
+    val = str(uuid.uuid4()).split('-')
+    return '{}'.format(val[1].upper())
+
+def allow_access(current_user):
+
+    user_id = current_user.get_id()
+    user = User.query.get(user_id)
+
+    if not (user.active and user.status == 1):
+        abort(403)

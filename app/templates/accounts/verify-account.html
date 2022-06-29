@@ -1,0 +1,61 @@
+{% extends "layouts/base-fullscreen.html" %}
+
+{% block title %} Account Verification {% endblock %}
+
+{% block content %}   
+
+    <div class="auth-wrapper">
+        <div class="auth-content">
+            <div class="auth-bg">
+                <span class="r"></span>
+                <span class="r s"></span>
+                <span class="r s"></span>
+                <span class="r"></span>
+            </div>
+            <div class="card">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="feather icon-unlock auth-icon"></i>
+                    </div>
+                    <h3 class="mb-4">Account Verification</h3>
+
+                    <span class="mb-0 text-muted">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                                {% for message in messages %}
+                                    {{ message }}
+                                {% endfor %}
+                            {% else %}
+                                Input the email address that is linked to your account.
+                            {% endif %}
+                        {% endwith %} 
+                    </span>
+
+                    <br />
+                    <br />
+                    
+                    <form role="form" method="post" action="">
+
+                        {{ form.hidden_tag() }}                    
+
+                        <div class="input-group mb-3">
+                            {{ form.otp(placeholder="OTP code", class="form-control") }}
+                        </div>
+                        
+                        <div class="form-group text-left">
+                        </div>
+                        <button type="submit" name="verification" class="btn btn-primary shadow-2 mb-4">Send</button>
+
+                    </form>
+
+                    <form method="post" action="">
+                        <span class="mb-0 text-muted">Didn't receive any code?</span><button type="submit" name="resend-otp">Resend OTP</button>
+                    </form>
+                    
+                    <br />
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}

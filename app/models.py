@@ -54,6 +54,15 @@ class Admin(db.Model, UserMixin):
     password = db.Column(db.LargeBinary)
     min_withdraw = db.Column(db.Integer, default=1500)
     cost_per_slot = db.Column(db.Integer, default=200)
+    email = db.Column(db.String(50), default='info@sabimillionaire.com.ng')
+    phone = db.Column(db.String(13))
+    address = db.Column(db.String(250))
+    site_name = db.Column(db.String(50), default='Sabimillionaire')
+
+class GrandWinner(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    grand_winner = db.Column(db.String(50), default=None)
+    grand_winner_time = db.Column(db.DateTime, default=None)
 
 class User(db.Model, UserMixin):
     '''User table
@@ -73,7 +82,9 @@ class User(db.Model, UserMixin):
     state = db.Column(db.String(50))
     country = db.Column(db.String(50))
     password = db.Column(db.LargeBinary)
-    active = db.Column(db.Boolean, default=True)
+    verify = db.Column(db.String(50))
+    status = db.Column(db.Integer, default=9)
+    active = db.Column(db.Boolean, default=False)
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -103,6 +114,18 @@ def request_loader(request):
     user = User.query.filter_by(username=username).first()
     return user if user else None
 
+
+class Primary(db.Model):
+    __tablename__ = 'primary'
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    question = db.Column(db.String(250), nullable=False)
+    correct_option = db.Column(db.String(250), nullable=False)
+    wrong_option1 = db.Column(db.String(250), nullable=False)
+    wrong_option2 = db.Column(db.String(250), nullable=False)
+    wrong_option3 = db.Column(db.String(250), nullable=False)
+    wrong_option4 = db.Column(db.String(250), nullable=False)
+
+
 class JuniorSecondary(db.Model):
     __tablename__ = 'junior_secondary'
     id = db.Column(db.Integer, primary_key=True, unique=True)
@@ -112,7 +135,7 @@ class JuniorSecondary(db.Model):
     wrong_option2 = db.Column(db.String(250), nullable=False)
     wrong_option3 = db.Column(db.String(250), nullable=False)
     wrong_option4 = db.Column(db.String(250), nullable=False)
-    
+ 
 
 class SeniorSecondary(db.Model):
     __tablename__ = 'senior_secondary'
@@ -172,9 +195,8 @@ class Countries(db.Model):
 
 class HeadShot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=False)
+    name = db.Column(db.String(255), default='static/uploads/default-avatar.png')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
 
 
 class Deposit(db.Model):
@@ -199,4 +221,7 @@ class Withdraw(db.Model):
     amount = db.Column(db.Float, nullable=False)
     reference = db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime)
+    bank_name = db.Column(db.String(100), nullable=False)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
