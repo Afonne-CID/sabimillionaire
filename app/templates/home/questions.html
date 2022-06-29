@@ -122,7 +122,7 @@
             <div id="exampleModalCenter" class="modal fade show" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" style="display: block; padding-right: 17px;">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <form method="post" action="">
+                        <form method="post" action="" class="alert alert-success">
                             <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalCenterTitle">Congratulations!</h5>
                             <button type="submit" class="close" id="close" name="cashout" data-dismiss="modal" aria-label="Close">
@@ -146,10 +146,10 @@
                                     {% endif %}
                                 {% else %}
                                     <div class="alert alert-warning">
-                                        You can't go the final round as there has been a winner today {{ winner }}.
+                                        You can't go the final round as <span class="btn btn-primary">{{ winner }}</span> has won the grand prize for today.
                                     </div>
                                 {% endif %}
-                                <button type="submit" class="btn btn-secondary" data-dismiss="modal" name="cashout" >Cashout {{ reward }}</button>
+                                <button type="submit" class="btn btn-primary" data-dismiss="modal" name="cashout" style="font-size:bold;">Cashout {{ reward }}</button>
                             </div>
                         </form>
                     </div>

@@ -17,6 +17,7 @@ import random
 
 load_dotenv()
 
+
 def yes_grand_winner(user):
     ''''''
     won_time = datetime.today().date()
@@ -39,8 +40,9 @@ def any_grand_winner():
     winner = GrandWinner.query.first()
     if winner:
         grand_winner = winner.grand_winner
-        won_time = winner.grand_winner_time
-        if (won_time == datetime.today()):
+        won_time = (winner.grand_winner_time).date()
+        tn = datetime.today().date()
+        if (won_time == tn):
             return grand_winner
         else:
             return False
@@ -107,7 +109,14 @@ def play_game():
     
     allow_access(current_user)
 
-    id = current_user.get_id()
+    winner = GrandWinner.query.first()
+    if not winner:
+        print('Not winner')
+        winner = GrandWinner(grand_winner=None,
+                grand_winner_time=None)
+        db.session.add(winner)
+        db.session.commit()
+
     headshot = get_headshot()
 
     if request.method == 'GET':
@@ -426,7 +435,6 @@ def play_and_win():
 
             if cur_level == 4:
                 winner = any_grand_winner()
-                print('got here', winner)
 
             if cnt + 1 <= comp:
                 cnt += 1

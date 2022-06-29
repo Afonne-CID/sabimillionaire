@@ -24,12 +24,6 @@ def configure_database(app):
     # @app.before_first_request
     # def initialize_database():
     #     db.create_all()
-    # @app.before_first_request
-    # def initialize_winner():
-    #     winner = GrandWinner.query.first()
-    #     if not winner:
-    #         winner = GrandWinner(grand_winner=None,
-    #                             grand_winner_time=None)
 
     @app.teardown_request
     def shutdown_session2(exception=None):
