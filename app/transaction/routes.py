@@ -81,7 +81,8 @@ def account_withdraw():
     headshot = get_headshot()
     withdrawals = Withdraw.query.filter_by(user_id=id).all()
     min_withdraw = Admin.query.first().min_withdraw
-    wallet_balance = Account.query.filter_by(user_id=id).first().wallet_balance
+    account = Account.query.filter_by(user_id=id).first()
+    wallet_balance = account.wallet_balance
 
     paginate = paginate_rtr()
     start = paginate['start']
@@ -106,16 +107,26 @@ def account_withdraw():
         if amount <= 0:
             flash('Invalid amount')
 
-        if (first_name == details.get('first-name') and
-            last_name == details.get('last-name')):
+        if (first_name == details.get('first_name') and
+            last_name == details.get('last_name')):
 
-            bank_name = details.get('bank-name')
-            account_number = float(details.get('account-number'))
+            bank_name = details.get('bank_name')
+            account_number = float(details.get('account_number'))
             amount = float(details.get('amount'))
 
             if bank_name and account_number:
-                withdraw = Withdraw(**request.form)
 
+                account.wallet_balance -= amount
+
+                withdraw = Withdraw(
+                    user_id=id,
+                    reference=payment_reference(),
+                    amount=request.form['amount'],
+                    bank_name=request.form['bank_name'],
+                    first_name=request.form['first_name'],
+                    last_name=request.form['last_name'],
+                    account_number=request.form['account_number']
+                )
                 db.session.add(withdraw)
                 db.session.commit()
 

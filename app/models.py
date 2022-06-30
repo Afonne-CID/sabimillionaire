@@ -217,11 +217,12 @@ class Withdraw(db.Model):
     '''Represents the payment table
     '''
     id = db.Column(db.Integer, primary_key=True, unique=True)
-    status = db.Column(db.String(10), nullable=False)
+    status = db.Column(db.String(10), nullable=False, default='Pending')
     amount = db.Column(db.Float, nullable=False)
     reference = db.Column(db.String(200), nullable=False)
-    created_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now())
     bank_name = db.Column(db.String(100), nullable=False)
     first_name = db.Column(db.String(100), nullable=False)
+    account_number = db.Column(db.Integer, nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

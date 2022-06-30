@@ -1,69 +1,36 @@
-window.addEventListener('load', function () {
-  progressBar()
-});
+window.addEventListener('load', function (e) {
+  var url_endpoint = e.target.location.href.split('/')[3];
+  progressBar(url_endpoint);
+})
 
-var animationTimeInMiliseconds = 10000; //30s 
 var interval = 100;
 var elem = document.getElementById("myBar");
 var beginningDate = new Date().getTime(); // Time in miliseconds
 
-function progressBar() {
-  resetProgressBar();
+function progressBar(url_endpoint) {
 
-  id = setInterval(frame, interval);
+    if (url_endpoint == 'free-trivia'){
+      var animationTimeInMiliseconds = 30000; //30s
+    }else{
+      var animationTimeInMiliseconds = 10000; //10s
+    }
 
-  function frame() {
-  var milisecondsFromBegin = new Date().getTime() - beginningDate;
-  var width = Math.floor(milisecondsFromBegin / animationTimeInMiliseconds * 100);
-  elem.style.width = width + "%";
+    resetProgressBar();
 
-    if (width >= 100) {
-      document.getElementById("next").click();
-      clearInterval(id);
+    id = setInterval(frame, interval);
+
+    function frame() {
+    var milisecondsFromBegin = new Date().getTime() - beginningDate;
+    var width = Math.floor(milisecondsFromBegin / animationTimeInMiliseconds * 100);
+    elem.style.width = width + "%";
+
+      if (width >= 100) {
+        document.getElementById("next").click();
+        clearInterval(id);
+      }
     }
   }
+  function resetProgressBar() {
+
+    elem.style.width = 0;
 }
-function resetProgressBar() {
-
-  elem.style.width = 0;
-}
-
-// var i = 0;
-// var interval = 60;
-// var animationTimeInMiliseconds = 10000;
-// var beginningDate = new Date().getTime();
-
-// function progressBar() {
-//   if (i == 0) {
-//     i = 1;
-//     var elem = document.getElementById("myBar");
-//     var width = 1;
-//     var id = setInterval(frame, interval);
-//     function frame() {
-//       if (width >= 100) {
-
-//         document.getElementById("next").click();
-//         clearInterval(id);
-//         i = 0;
-
-//       } else {
-//         width++;
-//         elem.style.width = width + "%";
-//       }
-//     }
-//   }
-// }
-
-// $('button#next').click( function(e) {
-//     e.preventDefault();
-//     console.log($('form#questions-form').serialize())
-//     $.ajax({
-//         url: '/free-trivia',
-//         type: 'POST',
-//         dataType: 'json',
-//         data: $('form#questions-form').serialize(),
-//         success: function() {
-//                   console.log('worked!')
-//                 }
-//     });
-// });
