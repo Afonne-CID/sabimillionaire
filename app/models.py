@@ -1,15 +1,48 @@
+import datetime
+from . import db
+from enum import unique
+from flask import abort, redirect, url_for, request
 from distutils.command.build_scripts import first_line_re
 from doctest import debug_script
 from email.policy import default
-from enum import unique
-import mimetypes
-from . import db
 from flask_admin.contrib import sqla
-from flask_login import UserMixin
+from flask_login import current_user, UserMixin
+from flask_security import RoleMixin
 from app import db, login_manager
 from app.auth.util import hash_pass
-import datetime
 from wtforms import PasswordField
+
+
+# class MyModelView(sqla.ModelView):
+
+#     def is_accessible(self):
+#         if not current_user.is_active or not current_user.is_authenticated:
+#             return False
+
+#         if current_user.has_role('admin'):
+#             return True
+
+#         return False
+
+#     def _handle_view(self, name, **kwargs):
+#         """
+#         Override builtin _handle_view in order to redirect users when a view is not accessible.
+#         """
+#         if not self.is_accessible():
+#             if current_user.is_authenticated:
+#                 # permission denied
+#                 abort(403)
+#             else:
+#                 # login
+#                 return redirect(url_for('security.login', next=request.url))
+
+
+#     # can_edit = True
+#     edit_modal = True
+#     create_modal = True    
+#     can_export = True
+#     can_view_details = True
+#     details_modal = True
 
 
 class UserView(sqla.ModelView):
@@ -48,7 +81,23 @@ class AdminUser(db.Model, UserMixin):
     active = db.Column(db.Boolean())
     confirmed_at = db.Column(db.DateTime())
 
+# class Role(db.Model, RoleMixin):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(80), unique=True)
+#     description = db.Column(db.String(255))
+
+#     def __str__(self):
+#         return self.name
+
+# roles_users = db.Table(
+#     'roles_users',
+#     db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+#     db.Column('admin_id', db.Integer, db.ForeignKey('admin.id')),
+#     db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+# )
+
 class Admin(db.Model, UserMixin):
+    __table__name = 'admin'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.LargeBinary)
@@ -58,6 +107,8 @@ class Admin(db.Model, UserMixin):
     phone = db.Column(db.String(13))
     address = db.Column(db.String(250))
     site_name = db.Column(db.String(50), default='Sabimillionaire')
+    # admin_role = db.relationship('Role', secondary=roles_users,
+    #                         backref=db.backref('admin', lazy='dynamic'))
 
 class GrandWinner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -85,6 +136,8 @@ class User(db.Model, UserMixin):
     verify = db.Column(db.String(50))
     status = db.Column(db.Integer, default=9)
     active = db.Column(db.Boolean, default=False)
+    # user_role = db.relationship('Role', secondary=roles_users,
+    #                     backref=db.backref('user', lazy='dynamic'))
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
