@@ -54,6 +54,8 @@
   {% endblock head_tail%}
 
 </head>
+
+{% if current_user.is_authenticated  and current_user.has_role('admin') %}
 <body class="hold-transition skin-blue sidebar-mini">
 
   {% block page_body %}
@@ -411,5 +413,16 @@
 {% block tail %}
 {% endblock tail %}
 
+<!-- <center>
+  <p class="alert alert-warning"> Error! </p>
+  <p class="alert alert-warning"> Admin Access Only</p>
+</center> -->
+
 </body>
+{% else %}
+  <center style="font-size:60px;">
+      Access Denied
+  </center>
+{% endif %}
+
 </html>

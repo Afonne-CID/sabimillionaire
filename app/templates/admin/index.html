@@ -2,7 +2,7 @@
 {% block body %}
 {{ super() }}
 
-{% if current_user.is_authenticated %}
+{% if current_user.is_authenticated  and current_user.has_role('admin') %}
 
 <!-- Content Header (Page header) -->
 <section class="content-header">

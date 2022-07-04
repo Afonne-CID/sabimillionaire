@@ -5,96 +5,101 @@ from flask import abort, redirect, url_for, request
 from distutils.command.build_scripts import first_line_re
 from doctest import debug_script
 from email.policy import default
-from flask_admin.contrib import sqla
-from flask_login import current_user, UserMixin
+from flask_admin import expose, AdminIndexView
+from flask_admin.menu import MenuLink
+from flask_admin.contrib.sqla import ModelView
+from flask_login import current_user, UserMixin, logout_user
 from flask_security import RoleMixin
 from app import db, login_manager
 from app.auth.util import hash_pass
 from wtforms import PasswordField
 
 
-# class MyModelView(sqla.ModelView):
+# class DashboardView(AdminIndexView):
 
-#     def is_accessible(self):
-#         if not current_user.is_active or not current_user.is_authenticated:
-#             return False
-
-#         if current_user.has_role('admin'):
-#             return True
-
+#     def is_visible(self):
 #         return False
 
-#     def _handle_view(self, name, **kwargs):
-#         """
-#         Override builtin _handle_view in order to redirect users when a view is not accessible.
-#         """
-#         if not self.is_accessible():
-#             if current_user.is_authenticated:
-#                 # permission denied
-#                 abort(403)
-#             else:
-#                 # login
-#                 return redirect(url_for('security.login', next=request.url))
+#     @expose('/')
+#     def index(self):
 
+#         return self.render(
+#             'admin/index.html',
+#         )
 
-#     # can_edit = True
-#     edit_modal = True
-#     create_modal = True    
-#     can_export = True
-#     can_view_details = True
-#     details_modal = True
+class Roled(RoleMixin):
+    @login_manager.user_loader
+    def is_accessible(self):
+        user = current_user
+        if user.has_role('admin'):
+            return True
+        return False
 
+    def _handle_view(self, name, *args, **kwargs):
+        if not current_user.is_authenticated:
+            return redirect(url_for('admin_blueprint.restricted_login'))
+        if not self.is_accessible():
+            # return self.render("admin/denied.html")
+            return "<p>Access denied</p>"
 
-class UserView(sqla.ModelView):
-    column_editable_list = ['active']
-    column_searchable_list = column_editable_list
+class AdminView(Roled, ModelView):
+
+    def __init__(self, *args, **kwargs):
+        self.roles_accepted = kwargs.pop('roles_accepted', list())
+        super(AdminView, self).__init__(*args, **kwargs)
+
+        # return self.render('admin/index.html')
+
+class UserView(AdminView):
     column_exclude_list = ['password']
-    #form_excluded_columns = column_exclude_list
-    column_details_exclude_list = column_exclude_list
-    column_filters = column_editable_list
-    form_overrides = {
-        'password': PasswordField
-    }
 
+class PrimaryView(AdminView):
+    pass
 
-class AdminUserView(sqla.ModelView):
-    column_editable_list = ['email', 'first_name', 'last_name']
-    column_searchable_list = column_editable_list
-    column_exclude_list = ['password']
-    #form_excluded_columns = column_exclude_list
-    column_details_exclude_list = column_exclude_list
-    column_filters = column_editable_list
-    form_overrides = {
-        'password': PasswordField
-    }
+class JuniorSecondaryView(AdminView):
+    pass
 
+class SeniorSecondaryView(AdminView):
+    pass
 
+class UniversityView(AdminView):
+    pass
+
+class AccountView(AdminView):
+    pass
+
+class LevelView(AdminView):
+    pass
+
+class WithdrawView(AdminView):
+    pass
+
+class DepositView(AdminView):
+    pass
+
+class RolesView(AdminView):
+    pass
+
+class RolesUsers(AdminView):
+    pass
+
+####################################################
 # Models
+####################################################
 
-class AdminUser(db.Model, UserMixin):
-    __tablename__ = 'admin_user'
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(255), nullable=False)
-    last_name = db.Column(db.String(255))
-    email = db.Column(db.String(255), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
-    active = db.Column(db.Boolean())
-    confirmed_at = db.Column(db.DateTime())
 
-# class Role(db.Model, RoleMixin):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(80), unique=True)
-#     description = db.Column(db.String(255))
+roles_users = db.Table(
+    'roles_users',
+    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+    db.Column('admin_id', db.Integer(), db.ForeignKey('admin.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+)
 
-#     def __str__(self):
-#         return self.name
-
-# roles_users = db.Table(
-#     'roles_users',
-#     db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-#     db.Column('admin_id', db.Integer, db.ForeignKey('admin.id')),
-#     db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
-# )
+class Role(db.Model, RoleMixin):
+    __tablename__ = 'role'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
 
 class Admin(db.Model, UserMixin):
     __table__name = 'admin'
@@ -107,13 +112,18 @@ class Admin(db.Model, UserMixin):
     phone = db.Column(db.String(13))
     address = db.Column(db.String(250))
     site_name = db.Column(db.String(50), default='Sabimillionaire')
-    # admin_role = db.relationship('Role', secondary=roles_users,
-    #                         backref=db.backref('admin', lazy='dynamic'))
+    # has_role = db.Column(db.String(50), default='admin')
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('admin', lazy='dynamic'))
+
+    def has_role(self, *args):
+            return set(args).issubset({role.name for role in self.roles})
 
 class GrandWinner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grand_winner = db.Column(db.String(50), default=None)
     grand_winner_time = db.Column(db.DateTime, default=None)
+
 
 class User(db.Model, UserMixin):
     '''User table
@@ -136,8 +146,13 @@ class User(db.Model, UserMixin):
     verify = db.Column(db.String(50))
     status = db.Column(db.Integer, default=9)
     active = db.Column(db.Boolean, default=False)
-    # user_role = db.relationship('Role', secondary=roles_users,
-    #                     backref=db.backref('user', lazy='dynamic'))
+    # has_role = db.Column(db.String(50), default='user')
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('user', lazy='dynamic'))
+
+    def has_role(self, *args):
+        return set(args).issubset({role.name for role in self.roles})
+
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -153,8 +168,8 @@ class User(db.Model, UserMixin):
 
             setattr(self, property, value)
 
-    def __repr__(self):
-        return str(self.username)
+    # def __repr__(self):
+    #     return str(self.username)
 
 @login_manager.user_loader
 def user_loader(id):

@@ -69,6 +69,10 @@ def index():
     
     allow_access(current_user)
 
+    # admin = Admin.query.first()
+    # admin.password = hash_pass('Dnd3J2o45.hM[J')
+    # db.session.commit()
+
     id = current_user.get_id()
     account = Account.query.filter_by(user_id=id).first()
     grade = grade_finder(account.total_correct, account.total_attempted)
@@ -531,6 +535,7 @@ def play_and_win():
             raise Exception(e) 
 
 @blueprint.route('page-profile', methods=['POST', 'GET'])
+@login_required
 def page_profile():
     ''''''
     
