@@ -1,5 +1,6 @@
 from cgitb import html
 import imghdr
+import json
 import os
 import uuid
 from flask import (
@@ -25,7 +26,7 @@ from app.auth.forms import (
     VerifyAccount,
     ChangePassword
 )
-from ..models import User, Account, HeadShot
+from ..models import User, Account, HeadShot, Role
 from app.auth.util import verify_pass, hash_pass
 from werkzeug.utils import secure_filename
 
@@ -183,9 +184,16 @@ def register():
                                    form=create_account_form)
 
         filename = secure_filename(headshot.filename)
-        try:       
+        try:
+
+            role = Role.query.filter_by(name='user').first()
+            if not role:
+                role = Role(name='user')
+                db.session.add(role)
+
             user = User(**request.form)
             user.verify = generate_code()
+            user.roles = [role]
             db.session.add(user)
             db.session.flush()
 
@@ -209,14 +217,20 @@ def register():
             
             db.session.add(headshot)
             db.session.add(account)
-            db.session.commit()
 
             login_user(user)
+            db.session.commit()
+
             mailer([user.email], 'Registration Was Successful', 'register', user)
 
         except Exception as e:
             db.session.rollback()
-            raise e
+            print(e)
+
+            return render_template('accounts/register.html',
+                                msg='Error occured',
+                                success=False,
+                                form=create_account_form)
 
         # return render_template('accounts/register.html',
         #             msg='User created please <a href="/login">login</a>',

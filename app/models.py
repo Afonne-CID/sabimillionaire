@@ -1,5 +1,4 @@
 import datetime
-from . import db
 from enum import unique
 from flask import abort, redirect, url_for, request
 from distutils.command.build_scripts import first_line_re
@@ -8,36 +7,33 @@ from email.policy import default
 from flask_admin import expose, AdminIndexView
 from flask_admin.menu import MenuLink
 from flask_admin.contrib.sqla import ModelView
-from flask_login import current_user, UserMixin, logout_user
+from flask_login import LoginManager, current_user, UserMixin, logout_user
 from flask_security import RoleMixin
-from app import db, login_manager
-from app.auth.util import hash_pass
+from flask_sqlalchemy import SQLAlchemy
+from app.auth.util import hash_pass as hp
 from wtforms import PasswordField
+from flask_security.forms import LoginForm
 
 
-# class DashboardView(AdminIndexView):
+db = SQLAlchemy()
+login_manager = LoginManager()
 
-#     def is_visible(self):
-#         return False
-
-#     @expose('/')
-#     def index(self):
-
-#         return self.render(
-#             'admin/index.html',
-#         )
 
 class Roled(RoleMixin):
     @login_manager.user_loader
     def is_accessible(self):
         user = current_user
-        if user.has_role('admin'):
-            return True
-        return False
+        try:
+            if user.has_role('admin'):
+                return True
+            return False
+        except Exception as e:
+            abort(403)
 
     def _handle_view(self, name, *args, **kwargs):
         if not current_user.is_authenticated:
-            return redirect(url_for('admin_blueprint.restricted_login'))
+            return redirect(url_for('security.login'))
+            # return redirect(url_for('admin_blueprint.restricted_login'))
         if not self.is_accessible():
             # return self.render("admin/denied.html")
             return "<p>Access denied</p>"
@@ -49,6 +45,16 @@ class AdminView(Roled, ModelView):
         super(AdminView, self).__init__(*args, **kwargs)
 
         # return self.render('admin/index.html')
+
+class MyAdminIndexView(AdminIndexView):
+    pass
+    # def index(self):
+    #     if not current_user.is_authenticated:
+    #         next_url = request.url
+    #         login_url = '%s?next=%s' % (url_for('login'), next_url)
+    #         return redirect(login_url)
+    #     return super(self, MyAdminIndexView).index()
+
 
 class UserView(AdminView):
     column_exclude_list = ['password']
@@ -91,7 +97,6 @@ class RolesUsers(AdminView):
 roles_users = db.Table(
     'roles_users',
     db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
-    db.Column('admin_id', db.Integer(), db.ForeignKey('admin.id')),
     db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
 )
 
@@ -101,23 +106,15 @@ class Role(db.Model, RoleMixin):
     name = db.Column(db.String(80), unique=True)
     description = db.Column(db.String(255))
 
-class Admin(db.Model, UserMixin):
-    __table__name = 'admin'
+class SiteSettings(db.Model, UserMixin):
+    __table__name = 'site_settings'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.LargeBinary)
     min_withdraw = db.Column(db.Integer, default=1500)
     cost_per_slot = db.Column(db.Integer, default=200)
     email = db.Column(db.String(50), default='info@sabimillionaire.com.ng')
     phone = db.Column(db.String(13))
     address = db.Column(db.String(250))
     site_name = db.Column(db.String(50), default='Sabimillionaire')
-    # has_role = db.Column(db.String(50), default='admin')
-    roles = db.relationship('Role', secondary=roles_users,
-                            backref=db.backref('admin', lazy='dynamic'))
-
-    def has_role(self, *args):
-            return set(args).issubset({role.name for role in self.roles})
 
 class GrandWinner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -142,11 +139,10 @@ class User(db.Model, UserMixin):
     city = db.Column(db.String(50))
     state = db.Column(db.String(50))
     country = db.Column(db.String(50))
-    password = db.Column(db.LargeBinary)
+    password = db.Column(db.String(255), nullable=False)
     verify = db.Column(db.String(50))
     status = db.Column(db.Integer, default=9)
     active = db.Column(db.Boolean, default=False)
-    # has_role = db.Column(db.String(50), default='user')
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('user', lazy='dynamic'))
 
@@ -164,7 +160,7 @@ class User(db.Model, UserMixin):
                 value = value[0]
 
             if property == 'password':
-                value = hash_pass(value)  # we need bytes here (not plain str)
+                value = hp(value)  # we need bytes here (not plain str)
 
             setattr(self, property, value)
 

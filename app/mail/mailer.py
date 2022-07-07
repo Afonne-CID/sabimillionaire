@@ -1,17 +1,17 @@
 import uuid
 from flask import Flask, jsonify, abort, current_app, render_template
 from flask_mail import Mail, Message
-from app.models import db, Admin
+from app.models import db, SiteSettings
 
 
 def mailer(to, subject, template, user):
     app = current_app
-    admin = Admin.query.first()
+    site_settings = SiteSettings.query.first()
     site_logo = '/static/assets/images/logo.png'
 
     with app.app_context():
         mail = Mail(app)
-        msg = Message(subject, sender=admin.email, recipients=to)
+        msg = Message(subject, sender=site_settings.email, recipients=to)
 
         if template == 'register':
             msg.html = render_template('mail/registration.html',
@@ -19,8 +19,8 @@ def mailer(to, subject, template, user):
                                         user_first_name=user.first_name,
                                         otp=user.verify,
                                         user_email=user.email,
-                                        admin_email=admin.email,
-                                        site_name=admin.site_name)
+                                        admin_email=site_settings.email,
+                                        site_name=site_settings.site_name)
         else:
 
             otp = generate_code()
@@ -34,22 +34,23 @@ def mailer(to, subject, template, user):
                             user_first_name=user.first_name,
                             otp=otp,
                             user_email=user.email,
-                            admin_email=admin.email,
-                            site_name=admin.site_name)
+                            admin_email=site_settings.email,
+                            site_name=site_settings.site_name)
             else:
                 msg.html = render_template('mail/send-otp.html',
                                             site_logo=site_logo,
                                             user_first_name=user.first_name,
                                             otp=otp,
                                             user_email=user.email,
-                                            admin_email=admin.email,
-                                            site_name=admin.site_name)
+                                            admin_email=site_settings.email,
+                                            site_name=site_settings.site_name)
         try:
             mail.send(msg)
 
         except Exception as e:
-            print(e)
-            abort(500)
+            raise e
+        
+        return
 
 def generate_code():
     ''''''
