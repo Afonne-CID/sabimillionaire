@@ -1,16 +1,12 @@
 # -*- encoding: utf-8 -*-
-from app.mail.mailer import mailer
-from urllib.parse import urlparse, parse_qs
-from os import environ as env
 from dotenv import load_dotenv
 from app.home import blueprint
 from flask_login import current_user, logout_user, login_required
 from app.auth.routes import allow_access
 from app.auth.util import hash_pass
-from flask import redirect, render_template, request, url_for, jsonify, abort, flash
+from flask import redirect, render_template, request, url_for, abort, flash
 from jinja2 import TemplateNotFound
 from ..models import *
-from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 import random
 

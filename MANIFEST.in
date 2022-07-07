@@ -1,0 +1,8 @@
+include app/static
+graft app/static
+graft app/templates
+prune migrations
+exclude .gitignore
+include config.py
+include .env
+global-exclude *__

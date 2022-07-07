@@ -1,5 +1,5 @@
 import uuid
-from flask import Flask, jsonify, abort, current_app, render_template
+from flask import current_app, render_template
 from flask_mail import Mail, Message
 from app.models import db, SiteSettings
 

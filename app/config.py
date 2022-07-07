@@ -1,4 +1,6 @@
 """Flask configuration variables."""
+import os
+import hashlib
 from os import environ, path
 from decouple import config
 from dotenv import load_dotenv
@@ -21,9 +23,19 @@ class Config:
     MAIL_USE_SSL = environ.get('MAIL_USE_SSL')
 
     # Database
-    SQLALCHEMY_DATABASE_URI = environ.get("SQLALCHEMY_DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = environ.get('SQLALCHEMY_DATABASE_URI')
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    SECURITY_LOGIN_URL = environ.get('SECURITY_LOGIN_URL')
+    SECURITY_LOGOUT_URL = environ.get('SECURITY_LOGOUT_URL')
+    ADMIN_USERNAME = environ.get('ADMIN_USERNAME')
+    ADMIN_PWD = environ.get('ADMIN_PWD')
+
+    SECURITY_PASSWORD_SALT = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+    SECURITY_PASSWORD_HASH = environ.get('SECURITY_PASSWORD_HASH')
+    SECURITY_POST_LOGIN_VIEW = environ.get('SECURITY_POST_LOGIN_VIEW')
+    # SECURITY_LOGIN_USER_TEMPLATE = environ.get('SECURITY_LOGIN_USER_TEMPLATE')
 
 
 class ProductionConfig(Config):

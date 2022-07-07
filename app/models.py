@@ -1,18 +1,11 @@
 import datetime
-from enum import unique
-from flask import abort, redirect, url_for, request
-from distutils.command.build_scripts import first_line_re
-from doctest import debug_script
-from email.policy import default
-from flask_admin import expose, AdminIndexView
-from flask_admin.menu import MenuLink
+from flask import abort, redirect, url_for
+from flask_admin import AdminIndexView
 from flask_admin.contrib.sqla import ModelView
-from flask_login import LoginManager, current_user, UserMixin, logout_user
+from flask_login import LoginManager, current_user, UserMixin
 from flask_security import RoleMixin
 from flask_sqlalchemy import SQLAlchemy
 from app.auth.util import hash_pass as hp
-from wtforms import PasswordField
-from flask_security.forms import LoginForm
 
 
 db = SQLAlchemy()
@@ -42,12 +35,28 @@ class AdminView(Roled, ModelView):
 
     def __init__(self, *args, **kwargs):
         self.roles_accepted = kwargs.pop('roles_accepted', list())
+        self.total_users = kwargs.pop('users')
+        self.withdrawal_requests = kwargs.pop('withdrawals')
+        self.deposit_requests = kwargs.pop('deposits')
         super(AdminView, self).__init__(*args, **kwargs)
 
         # return self.render('admin/index.html')
 
+# class HomeView(BaseView):
+#     @expose('/')
+#     def index(self):
+#         pricing = [
+#             {'label': 'Regular', 'value': '10'},
+#             {'label': 'Premium', 'value': '20'}
+#         ]
+#         return self.render('index.html', pricing=pricing)
+
 class MyAdminIndexView(AdminIndexView):
-    pass
+    def __init__(self, *args, **kwargs):
+        self.roles_accepted = kwargs.pop('roles_accepted', list())
+        self.total_users = kwargs.pop('users')
+        self.withdrawal_requests = kwargs.pop('withdrawals')
+        self.deposit_requests = kwargs.pop('deposits')
     # def index(self):
     #     if not current_user.is_authenticated:
     #         next_url = request.url
@@ -139,7 +148,7 @@ class User(db.Model, UserMixin):
     city = db.Column(db.String(50))
     state = db.Column(db.String(50))
     country = db.Column(db.String(50))
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.LargeBinary, nullable=False)
     verify = db.Column(db.String(50))
     status = db.Column(db.Integer, default=9)
     active = db.Column(db.Boolean, default=False)

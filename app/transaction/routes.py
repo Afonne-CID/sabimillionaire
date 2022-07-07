@@ -1,6 +1,6 @@
 import uuid
 import requests
-from flask import jsonify, render_template, request, flash
+from flask import render_template, request, flash
 from flask_login import login_required, current_user
 from app.transaction import blueprint
 from app.home.routes import paginate_rtr
@@ -21,7 +21,7 @@ def account_fund():
 
     if ref:
         url = 'https://api.paystack.co/transaction/verify/{}'.format(ref)
-        token = 'sk_test_c28bf021fe3c0afafc6414ac3ef4cb9bcaaa3b03'
+        token = 'pk_live_d21acf30c77dc2fcab26cb98deabfeb24b43ac40'
 
         req = requests.get(url,
                 headers={'Content-Type':'application/json',
@@ -80,7 +80,7 @@ def account_withdraw():
     id = current_user.get_id()
     headshot = get_headshot()
     withdrawals = Withdraw.query.filter_by(user_id=id).all()
-    min_withdraw = Admin.query.first().min_withdraw
+    min_withdraw = SiteSettings.query.first().min_withdraw
     account = Account.query.filter_by(user_id=id).first()
     wallet_balance = account.wallet_balance
 
@@ -96,10 +96,9 @@ def account_withdraw():
 
         user = User.query.get(id)
         details = request.form
-        print(details)
 
-        first_name = user.first_name
-        last_name = user.last_name
+        first_name = user.first_name.lower()
+        last_name = user.last_name.lower()
         amount = float(details.get('amount'))
         
         if amount > wallet_balance:
@@ -107,8 +106,8 @@ def account_withdraw():
         if amount <= 0:
             flash('Invalid amount')
 
-        if (first_name == details.get('first_name') and
-            last_name == details.get('last_name')):
+        if (first_name == details.get('first_name').lower() and
+            last_name == details.get('last_name').lower()):
 
             bank_name = details.get('bank_name')
             account_number = float(details.get('account_number'))
@@ -154,7 +153,7 @@ def buy_slots():
     id = current_user.get_id()
     headshot = get_headshot()
     withdrawals = Withdraw.query.filter_by(user_id=id).all()
-    min_withdraw = Admin.query.first().min_withdraw
+    min_withdraw = SiteSettings.query.first().min_withdraw
     account = Account.query.filter_by(user_id=id).first()
     wallet_balance = account.wallet_balance
 
@@ -167,7 +166,7 @@ def buy_slots():
     total_pages = d_len if ((d_len / count) - (int(d_len / count))) == 0 else d_len + count
 
     deposits = Deposit.query.filter_by(user_id=id).all()
-    cost_per_slot = Admin.query.first().cost_per_slot
+    cost_per_slot = SiteSettings.query.first().cost_per_slot
 
 
     if 'buy-slots' in request.form:

@@ -1,6 +1,4 @@
-from cgitb import html
 import imghdr
-import json
 import os
 import uuid
 from flask import (
@@ -16,7 +14,6 @@ from flask_login import (
     login_user,
     logout_user
 )
-from requests import head
 from app import db, login_manager
 from app.mail.mailer import mailer
 from app.auth import blueprint
@@ -186,14 +183,11 @@ def register():
         filename = secure_filename(headshot.filename)
         try:
 
-            role = Role.query.filter_by(name='user').first()
-            if not role:
-                role = Role(name='user')
-                db.session.add(role)
+            user_role = Role.query.filter_by(name='user').first()
 
             user = User(**request.form)
             user.verify = generate_code()
-            user.roles = [role]
+            user.roles = [user_role]
             db.session.add(user)
             db.session.flush()
 

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sabimillionaire"
+version = "1.0.0"
+authors = [
+  { name="Afonne-CID Paul Onyedikachi", email="afonnedigital@gmail.com" },
+]
+description = "At its core, gamifying and rewarding learning"
+readme = "README.md"
+license = { file="LICENSE" }
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: ",
+    "Operating System :: ",
+]
+
+[project.urls]
+"Homepage" = "https://sabimillionaire.com.ng"
