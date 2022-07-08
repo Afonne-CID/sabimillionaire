@@ -44,10 +44,15 @@ Install the required packages with the command `pip install -r requirements`.
 ### Before Running for the First Time
 
 1. Create tables
+
 Install `flask_migrate`.
+
 Then run:
+
     $ flask db init
+
     $ flask db migrate
+    
     $ flask db upgrade
 
 1. Setup a database and add at least 5 questions each on the tables:
