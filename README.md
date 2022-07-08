@@ -75,6 +75,7 @@ Then run:
     INSERT INTO `countries` (`id`, `name`, `two_char`, `three_char`)
 
     VALUES
+    
         (1, 'Afghanistan', 'AF', 'AFG'),
 
         (2, 'Aland Islands', 'AX', 'ALA'),
