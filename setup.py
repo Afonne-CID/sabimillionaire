@@ -7,6 +7,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
+        'waitress'
         'Flask==2.1.2',
         'Flask_Admin==1.6.0',
         'Flask_Login==0.6.1',

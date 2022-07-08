@@ -1,4 +1,4 @@
-Flask==2.1.2
+waitressFlask==2.1.2
 Flask_Admin==1.6.0
 Flask_Login==0.6.1
 Flask_Mail==0.9.1

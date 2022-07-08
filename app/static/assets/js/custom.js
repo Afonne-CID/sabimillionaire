@@ -7,7 +7,7 @@ if (paymentForm) {
   function payWithPaystack() {
   
     var handler = PaystackPop.setup({
-      key: 'pk_test_7ca2670623a4247a764e0c5413be0749edf05fd1',
+      key: 'PAYSTACK TEST/LIVE PUBLIC KEY',
       email: document.getElementById('email-address').value,
       amount: document.getElementById('amount').value * 100,
       currency: 'NGN',

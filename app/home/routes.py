@@ -111,7 +111,6 @@ def play_game():
 
     winner = GrandWinner.query.first()
     if not winner:
-        print('Not winner')
         winner = GrandWinner(grand_winner=None,
                 grand_winner_time=None)
         db.session.add(winner)
@@ -162,7 +161,7 @@ def free_trivia():
                     return render_template('home/index.html')
 
             if 'cashout' in request.form:
-                reward = int(request.form['cashout']) * 10
+                reward = int(request.form['level']) * 10
                 account = Account.query.filter_by(user_id=id).first()
                 account.coin_balance += reward
 

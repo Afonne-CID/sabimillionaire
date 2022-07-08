@@ -21,7 +21,7 @@ def account_fund():
 
     if ref:
         url = 'https://api.paystack.co/transaction/verify/{}'.format(ref)
-        token = 'pk_live_d21acf30c77dc2fcab26cb98deabfeb24b43ac40'
+        token = 'PAYSTACK TEST/LIVE PUBLIC KEY'
 
         req = requests.get(url,
                 headers={'Content-Type':'application/json',
