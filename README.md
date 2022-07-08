@@ -21,9 +21,11 @@ By this provision for the instant gratification desires that is characteristic o
 ### Setup A Virutal Environment
 
 Install `virtualenv`:
+
     $ pip install virtualenv
 
 Create a virutal enviroment
+
     $ virtualenv VARIABLE # Name to refer the environment with.
 
 Now activate. The activation procedure depends on your machine's OS.
