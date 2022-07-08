@@ -2,6 +2,7 @@ import os
 import hashlib
 import binascii
 
+
 def hash_pass(password):
     """Hash a password for storing."""
 

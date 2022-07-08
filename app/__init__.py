@@ -9,15 +9,18 @@ from app.models import *
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+
 def register_extensions(app):
-    db.init_app(app) # Initializes the database
-    login_manager.init_app(app) #Initializes login manager
+    db.init_app(app)  # Initializes the database
+    login_manager.init_app(app)  # Initializes login manager
     migrate = Migrate(app, db)
+
 
 def register_blueprints(app):
     for module_name in ('auth', 'home', 'transaction'):
         module = import_module('app.{}.routes'.format(module_name))
         app.register_blueprint(module.blueprint)
+
 
 def configure_database(app):
 
@@ -33,17 +36,18 @@ def configure_database(app):
     def shutdown_session2(exception=None):
         db.session.remove()
 
+
 def create_app():
     '''Construct the core application'''
     app = Flask(__name__, instance_relative_config=False)
     app.config.from_object('app.config.Config')
-    
+
     register_extensions(app)
     register_blueprints(app)
     configure_database(app)
 
-
-    admin = Admin(app,
+    admin = Admin(
+        app,
         'Dashboard',
         endpoint='/restricted/admin',
         url='/restricted/admin',
@@ -51,7 +55,7 @@ def create_app():
     )
 
     with app.app_context():
-    
+
         try:
             withdrawal_requests = None
             deposit_requests = None
@@ -71,7 +75,7 @@ def create_app():
                     Level(amount=25000),
                     Level(amount=50000)
                 ]
-                
+
                 for level in res:
                     db.session.add(level)
                 db.session.commit()
@@ -100,18 +104,107 @@ def create_app():
             db.session.rollback()
             raise e
 
-
-    # # Add model views
-    admin.add_view(RolesView(Role, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-sitemap', name="Roles", roles_accepted=['admin']))
-    admin.add_view(UserView(User, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-users', name="Users", roles_accepted=['admin']))
-    admin.add_view(PrimaryView(Primary, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-book', name="Primary", roles_accepted=['admin']))
-    admin.add_view(JuniorSecondaryView(JuniorSecondary, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-book', name="Junior", roles_accepted=['admin']))
-    admin.add_view(SeniorSecondaryView(SeniorSecondary, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-book', name="Secondary", roles_accepted=['admin']))
-    admin.add_view(UniversityView(University, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-book', name="University", roles_accepted=['admin']))
-    admin.add_view(AccountView(Account, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-id-card-o', name="Accounts", roles_accepted=['admin']))
-    admin.add_view(LevelView(Level, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-level-up', name="Levels", roles_accepted=['admin']))
-    admin.add_view(WithdrawView(Withdraw, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-university', name="Withdrawals", roles_accepted=['admin']))
-    admin.add_view(DepositView(Deposit, db.session, users=total_users, withdrawals=withdrawal_requests, deposits=deposit_requests, menu_icon_type='fa', menu_icon_value='fa-credit-card-alt', name="Deposits", roles_accepted=['admin']))
+    # Add model views
+    admin.add_view(RolesView(
+                    Role,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-sitemap',
+                    name="Roles",
+                    roles_accepted=['admin']))
+    admin.add_view(UserView(
+                    User,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-users',
+                    name="Users",
+                    roles_accepted=['admin']))
+    admin.add_view(PrimaryView(
+                    Primary,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-book',
+                    name="Primary",
+                    roles_accepted=['admin']))
+    admin.add_view(JuniorSecondaryView(
+                    JuniorSecondary,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-book',
+                    name="Junior",
+                    roles_accepted=['admin']))
+    admin.add_view(SeniorSecondaryView(
+                    SeniorSecondary,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-book',
+                    name="Secondary",
+                    roles_accepted=['admin']))
+    admin.add_view(UniversityView(
+                    University,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-book',
+                    name="University",
+                    roles_accepted=['admin']))
+    admin.add_view(AccountView(
+                    Account,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-id-card-o',
+                    name="Accounts",
+                    roles_accepted=['admin']))
+    admin.add_view(LevelView(
+                    Level,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-level-up',
+                    name="Levels",
+                    roles_accepted=['admin']))
+    admin.add_view(WithdrawView(
+                    Withdraw,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-university',
+                    name="Withdrawals",
+                    roles_accepted=['admin']))
+    admin.add_view(DepositView(
+                    Deposit,
+                    db.session,
+                    users=total_users,
+                    withdrawals=withdrawal_requests,
+                    deposits=deposit_requests,
+                    menu_icon_type='fa',
+                    menu_icon_value='fa-credit-card-alt',
+                    name="Deposits",
+                    roles_accepted=['admin']))
     admin.add_link(MenuLink(name='Logout', category='', url="/logout"))
     admin.add_link(MenuLink(name='Login', category='', url="/login"))
 
